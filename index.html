@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PopCat Game</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background: #1a1a2e;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            font-family: 'Arial', sans-serif;
+            user-select: none;
+            -webkit-user-select: none;
+            overflow: hidden;
+        }
+
+        h1 {
+            color: #fff;
+            font-size: 48px;
+            margin-bottom: 10px;
+            text-shadow: 0 0 20px rgba(255, 107, 107, 0.8);
+        }
+
+        #score {
+            color: #ff6b6b;
+            font-size: 64px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-shadow: 0 0 15px rgba(255, 107, 107, 0.5);
+            transition: transform 0.05s;
+        }
+
+        #score.pop {
+            transform: scale(1.2);
+        }
+
+        #cat-container {
+            position: relative;
+            cursor: pointer;
+            transition: transform 0.05s;
+        }
+
+        #cat-container:active {
+            transform: scale(0.95);
+        }
+
+        .cat-svg {
+            width: 300px;
+            height: 300px;
+        }
+
+        /* 點擊特效 */
+        .pop-text {
+            position: absolute;
+            color: #ffe66d;
+            font-size: 32px;
+            font-weight: bold;
+            pointer-events: none;
+            animation: floatUp 0.8s ease-out forwards;
+            text-shadow: 0 0 10px rgba(255, 230, 109, 0.8);
+        }
+
+        @keyframes floatUp {
+            0% { opacity: 1; transform: translateY(0) scale(1); }
+            100% { opacity: 0; transform: translateY(-100px) scale(1.5); }
+        }
+
+        .particle {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            pointer-events: none;
+            animation: particleBurst 0.6s ease-out forwards;
+        }
+
+        @keyframes particleBurst {
+            0% { opacity: 1; transform: translate(0, 0) scale(1); }
+            100% { opacity: 0; transform: translate(var(--tx), var(--ty)) scale(0); }
+        }
+
+        #pps {
+            color: #aaa;
+            font-size: 18px;
+            margin-top: 15px;
+        }
+
+        #instructions {
+            color: #666;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>POP CAT!</h1>
+    <div id="score">0</div>
+    <div id="cat-container" onmousedown="popCat(event)" ontouchstart="popCat(event)">
+        <!-- 閉嘴貓 -->
+        <svg id="cat-closed" class="cat-svg" viewBox="0 0 300 300">
+            <!-- 耳朵 -->
+            <polygon points="60,120 90,30 130,110" fill="#ff9a56"/>
+            <polygon points="70,110 95,50 120,105" fill="#ffb88c"/>
+            <polygon points="240,120 210,30 170,110" fill="#ff9a56"/>
+            <polygon points="230,110 205,50 180,105" fill="#ffb88c"/>
+            <!-- 頭 -->
+            <ellipse cx="150" cy="180" rx="110" ry="100" fill="#ff9a56"/>
+            <!-- 臉內部 -->
+            <ellipse cx="150" cy="190" rx="85" ry="75" fill="#ffb88c"/>
+            <!-- 眼睛 -->
+            <ellipse cx="115" cy="165" rx="18" ry="20" fill="#fff"/>
+            <ellipse cx="185" cy="165" rx="18" ry="20" fill="#fff"/>
+            <ellipse cx="115" cy="165" rx="10" ry="12" fill="#2d2d2d"/>
+            <ellipse cx="185" cy="165" rx="10" ry="12" fill="#2d2d2d"/>
+            <!-- 眼睛高光 -->
+            <circle cx="120" cy="160" r="4" fill="#fff"/>
+            <circle cx="190" cy="160" r="4" fill="#fff"/>
+            <!-- 鼻子 -->
+            <ellipse cx="150" cy="195" rx="8" ry="5" fill="#ff6b6b"/>
+            <!-- 閉嘴 -->
+            <path d="M 130 205 Q 150 215 170 205" stroke="#2d2d2d" stroke-width="3" fill="none" stroke-linecap="round"/>
+            <!-- 鬍鬚 -->
+            <line x1="50" y1="190" x2="100" y2="195" stroke="#2d2d2d" stroke-width="2"/>
+            <line x1="50" y1="205" x2="100" y2="205" stroke="#2d2d2d" stroke-width="2"/>
+            <line x1="200" y1="195" x2="250" y2="190" stroke="#2d2d2d" stroke-width="2"/>
+            <line x1="200" y1="205" x2="250" y2="205" stroke="#2d2d2d" stroke-width="2"/>
+        </svg>
+        <!-- 張嘴貓 -->
+        <svg id="cat-open" class="cat-svg" viewBox="0 0 300 300" style="display:none;">
+            <!-- 耳朵 -->
+            <polygon points="60,120 90,30 130,110" fill="#ff9a56"/>
+            <polygon points="70,110 95,50 120,105" fill="#ffb88c"/>
+            <polygon points="240,120 210,30 170,110" fill="#ff9a56"/>
+            <polygon points="230,110 205,50 180,105" fill="#ffb88c"/>
+            <!-- 頭 -->
+            <ellipse cx="150" cy="180" rx="110" ry="100" fill="#ff9a56"/>
+            <!-- 臉內部 -->
+            <ellipse cx="150" cy="190" rx="85" ry="75" fill="#ffb88c"/>
+            <!-- 眼睛（張大） -->
+            <ellipse cx="115" cy="160" rx="20" ry="24" fill="#fff"/>
+            <ellipse cx="185" cy="160" rx="20" ry="24" fill="#fff"/>
+            <ellipse cx="115" cy="160" rx="12" ry="14" fill="#2d2d2d"/>
+            <ellipse cx="185" cy="160" rx="12" ry="14" fill="#2d2d2d"/>
+            <!-- 眼睛高光 -->
+            <circle cx="121" cy="155" r="5" fill="#fff"/>
+            <circle cx="191" cy="155" r="5" fill="#fff"/>
+            <!-- 鼻子 -->
+            <ellipse cx="150" cy="192" rx="8" ry="5" fill="#ff6b6b"/>
+            <!-- 張嘴 -->
+            <ellipse cx="150" cy="220" rx="30" ry="22" fill="#2d2d2d"/>
+            <ellipse cx="150" cy="215" rx="25" ry="12" fill="#ff4757"/>
+            <!-- 舌頭 -->
+            <ellipse cx="150" cy="230" rx="12" ry="8" fill="#ff6b81"/>
+            <!-- 鬍鬚 -->
+            <line x1="45" y1="185" x2="95" y2="192" stroke="#2d2d2d" stroke-width="2"/>
+            <line x1="45" y1="200" x2="95" y2="200" stroke="#2d2d2d" stroke-width="2"/>
+            <line x1="205" y1="192" x2="255" y2="185" stroke="#2d2d2d" stroke-width="2"/>
+            <line x1="205" y1="200" x2="255" y2="200" stroke="#2d2d2d" stroke-width="2"/>
+        </svg>
+    </div>
+    <div id="pps">每秒點擊: 0</div>
+    <div id="instructions">點擊貓咪！越快越好！</div>
+
+    <script>
+        let score = 0;
+        let clicks = [];
+        const scoreEl = document.getElementById('score');
+        const catClosed = document.getElementById('cat-closed');
+        const catOpen = document.getElementById('cat-open');
+        const container = document.getElementById('cat-container');
+        const ppsEl = document.getElementById('pps');
+        let mouthTimer = null;
+
+        // 音效
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        function playPop() {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.frequency.setValueAtTime(600 + Math.random() * 200, audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(200, audioCtx.currentTime + 0.1);
+            gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+            osc.start(audioCtx.currentTime);
+            osc.stop(audioCtx.currentTime + 0.1);
+        }
+
+        function popCat(e) {
+            e.preventDefault();
+            score++;
+            scoreEl.textContent = score;
+
+            // 分數彈跳效果
+            scoreEl.classList.remove('pop');
+            void scoreEl.offsetWidth;
+            scoreEl.classList.add('pop');
+
+            // 張嘴
+            catClosed.style.display = 'none';
+            catOpen.style.display = 'block';
+            clearTimeout(mouthTimer);
+            mouthTimer = setTimeout(() => {
+                catClosed.style.display = 'block';
+                catOpen.style.display = 'none';
+            }, 120);
+
+            // 音效
+            playPop();
+
+            // +1 浮動文字
+            const popText = document.createElement('div');
+            popText.className = 'pop-text';
+            popText.textContent = '+1';
+            popText.style.left = (Math.random() * 200 + 50) + 'px';
+            popText.style.top = (Math.random() * 100 + 50) + 'px';
+            container.appendChild(popText);
+            setTimeout(() => popText.remove(), 800);
+
+            // 粒子特效
+            const colors = ['#ff6b6b', '#ffe66d', '#48dbfb', '#ff9ff3', '#54a0ff'];
+            for (let i = 0; i < 6; i++) {
+                const p = document.createElement('div');
+                p.className = 'particle';
+                p.style.background = colors[Math.floor(Math.random() * colors.length)];
+                p.style.left = '150px';
+                p.style.top = '150px';
+                const angle = Math.random() * Math.PI * 2;
+                const dist = 50 + Math.random() * 80;
+                p.style.setProperty('--tx', Math.cos(angle) * dist + 'px');
+                p.style.setProperty('--ty', Math.sin(angle) * dist + 'px');
+                container.appendChild(p);
+                setTimeout(() => p.remove(), 600);
+            }
+
+            // PPS 計算
+            const now = Date.now();
+            clicks.push(now);
+            clicks = clicks.filter(t => now - t < 1000);
+        }
+
+        // 更新 PPS
+        setInterval(() => {
+            const now = Date.now();
+            clicks = clicks.filter(t => now - t < 1000);
+            ppsEl.textContent = '每秒點擊: ' + clicks.length;
+        }, 200);
+    </script>
+</body>
+</html>
