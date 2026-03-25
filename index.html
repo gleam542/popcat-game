@@ -96,6 +96,24 @@
             font-size: 14px;
             margin-top: 10px;
         }
+
+        #bruise-msg {
+            color: #b388ff;
+            font-size: 24px;
+            font-weight: bold;
+            margin-top: 10px;
+            text-shadow: 0 0 15px rgba(179, 136, 255, 0.6);
+            display: none;
+            animation: shake 0.5s ease-in-out;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20% { transform: translateX(-10px); }
+            40% { transform: translateX(10px); }
+            60% { transform: translateX(-5px); }
+            80% { transform: translateX(5px); }
+        }
     </style>
 </head>
 <body>
@@ -163,16 +181,98 @@
             <line x1="205" y1="192" x2="255" y2="185" stroke="#2d2d2d" stroke-width="2"/>
             <line x1="205" y1="200" x2="255" y2="200" stroke="#2d2d2d" stroke-width="2"/>
         </svg>
+        <!-- 瘀青閉嘴貓 -->
+        <svg id="cat-bruised-closed" class="cat-svg" viewBox="0 0 300 300" style="display:none;">
+            <!-- 耳朵 -->
+            <polygon points="60,120 90,30 130,110" fill="#7c6bad"/>
+            <polygon points="70,110 95,50 120,105" fill="#9a85c4"/>
+            <polygon points="240,120 210,30 170,110" fill="#7c6bad"/>
+            <polygon points="230,110 205,50 180,105" fill="#9a85c4"/>
+            <!-- 頭 -->
+            <ellipse cx="150" cy="180" rx="110" ry="100" fill="#7c6bad"/>
+            <!-- 臉內部 -->
+            <ellipse cx="150" cy="190" rx="85" ry="75" fill="#9a85c4"/>
+            <!-- 瘀青斑塊 -->
+            <ellipse cx="100" cy="175" rx="25" ry="18" fill="#5c3d8f" opacity="0.5"/>
+            <ellipse cx="195" cy="170" rx="20" ry="15" fill="#4a2d7a" opacity="0.4"/>
+            <circle cx="170" cy="210" r="12" fill="#5c3d8f" opacity="0.3"/>
+            <!-- 眼睛（暈眩旋轉） -->
+            <ellipse cx="115" cy="165" rx="18" ry="20" fill="#fff"/>
+            <ellipse cx="185" cy="165" rx="18" ry="20" fill="#fff"/>
+            <!-- X 眼 -->
+            <line x1="107" y1="157" x2="123" y2="173" stroke="#2d2d2d" stroke-width="3" stroke-linecap="round"/>
+            <line x1="123" y1="157" x2="107" y2="173" stroke="#2d2d2d" stroke-width="3" stroke-linecap="round"/>
+            <line x1="177" y1="157" x2="193" y2="173" stroke="#2d2d2d" stroke-width="3" stroke-linecap="round"/>
+            <line x1="193" y1="157" x2="177" y2="173" stroke="#2d2d2d" stroke-width="3" stroke-linecap="round"/>
+            <!-- 鼻子 -->
+            <ellipse cx="150" cy="195" rx="8" ry="5" fill="#cc5577"/>
+            <!-- 閉嘴（委屈） -->
+            <path d="M 130 210 Q 150 200 170 210" stroke="#2d2d2d" stroke-width="3" fill="none" stroke-linecap="round"/>
+            <!-- 鬍鬚 -->
+            <line x1="50" y1="190" x2="100" y2="195" stroke="#2d2d2d" stroke-width="2"/>
+            <line x1="50" y1="205" x2="100" y2="205" stroke="#2d2d2d" stroke-width="2"/>
+            <line x1="200" y1="195" x2="250" y2="190" stroke="#2d2d2d" stroke-width="2"/>
+            <line x1="200" y1="205" x2="250" y2="205" stroke="#2d2d2d" stroke-width="2"/>
+            <!-- OK繃 -->
+            <rect x="175" y="140" width="35" height="16" rx="4" fill="#f5deb3" transform="rotate(-20, 192, 148)"/>
+            <line x1="182" y1="145" x2="182" y2="153" stroke="#deb887" stroke-width="1" transform="rotate(-20, 192, 148)"/>
+            <line x1="203" y1="145" x2="203" y2="153" stroke="#deb887" stroke-width="1" transform="rotate(-20, 192, 148)"/>
+        </svg>
+        <!-- 瘀青張嘴貓 -->
+        <svg id="cat-bruised-open" class="cat-svg" viewBox="0 0 300 300" style="display:none;">
+            <!-- 耳朵 -->
+            <polygon points="60,120 90,30 130,110" fill="#7c6bad"/>
+            <polygon points="70,110 95,50 120,105" fill="#9a85c4"/>
+            <polygon points="240,120 210,30 170,110" fill="#7c6bad"/>
+            <polygon points="230,110 205,50 180,105" fill="#9a85c4"/>
+            <!-- 頭 -->
+            <ellipse cx="150" cy="180" rx="110" ry="100" fill="#7c6bad"/>
+            <!-- 臉內部 -->
+            <ellipse cx="150" cy="190" rx="85" ry="75" fill="#9a85c4"/>
+            <!-- 瘀青斑塊 -->
+            <ellipse cx="100" cy="175" rx="25" ry="18" fill="#5c3d8f" opacity="0.5"/>
+            <ellipse cx="195" cy="170" rx="20" ry="15" fill="#4a2d7a" opacity="0.4"/>
+            <circle cx="170" cy="210" r="12" fill="#5c3d8f" opacity="0.3"/>
+            <!-- 眼睛 -->
+            <ellipse cx="115" cy="160" rx="20" ry="24" fill="#fff"/>
+            <ellipse cx="185" cy="160" rx="20" ry="24" fill="#fff"/>
+            <!-- X 眼 -->
+            <line x1="105" y1="150" x2="125" y2="170" stroke="#2d2d2d" stroke-width="3" stroke-linecap="round"/>
+            <line x1="125" y1="150" x2="105" y2="170" stroke="#2d2d2d" stroke-width="3" stroke-linecap="round"/>
+            <line x1="175" y1="150" x2="195" y2="170" stroke="#2d2d2d" stroke-width="3" stroke-linecap="round"/>
+            <line x1="195" y1="150" x2="175" y2="170" stroke="#2d2d2d" stroke-width="3" stroke-linecap="round"/>
+            <!-- 鼻子 -->
+            <ellipse cx="150" cy="192" rx="8" ry="5" fill="#cc5577"/>
+            <!-- 張嘴（哀嚎） -->
+            <ellipse cx="150" cy="220" rx="30" ry="22" fill="#2d2d2d"/>
+            <ellipse cx="150" cy="215" rx="25" ry="12" fill="#ff4757"/>
+            <!-- 舌頭 -->
+            <ellipse cx="150" cy="230" rx="12" ry="8" fill="#ff6b81"/>
+            <!-- 鬍鬚 -->
+            <line x1="45" y1="185" x2="95" y2="192" stroke="#2d2d2d" stroke-width="2"/>
+            <line x1="45" y1="200" x2="95" y2="200" stroke="#2d2d2d" stroke-width="2"/>
+            <line x1="205" y1="192" x2="255" y2="185" stroke="#2d2d2d" stroke-width="2"/>
+            <line x1="205" y1="200" x2="255" y2="200" stroke="#2d2d2d" stroke-width="2"/>
+            <!-- OK繃 -->
+            <rect x="175" y="140" width="35" height="16" rx="4" fill="#f5deb3" transform="rotate(-20, 192, 148)"/>
+            <line x1="182" y1="145" x2="182" y2="153" stroke="#deb887" stroke-width="1" transform="rotate(-20, 192, 148)"/>
+            <line x1="203" y1="145" x2="203" y2="153" stroke="#deb887" stroke-width="1" transform="rotate(-20, 192, 148)"/>
+        </svg>
     </div>
+    <div id="bruise-msg"></div>
     <div id="pps">每秒點擊: 0</div>
     <div id="instructions">點擊貓咪！越快越好！</div>
 
     <script>
         let score = 0;
         let clicks = [];
+        let isBruised = false;
         const scoreEl = document.getElementById('score');
         const catClosed = document.getElementById('cat-closed');
         const catOpen = document.getElementById('cat-open');
+        const catBruisedClosed = document.getElementById('cat-bruised-closed');
+        const catBruisedOpen = document.getElementById('cat-bruised-open');
+        const bruiseMsg = document.getElementById('bruise-msg');
         const container = document.getElementById('cat-container');
         const ppsEl = document.getElementById('pps');
         let mouthTimer = null;
@@ -198,18 +298,36 @@
             score++;
             scoreEl.textContent = score;
 
+            // 到 100 分變瘀青
+            if (score === 100 && !isBruised) {
+                isBruised = true;
+                catClosed.style.display = 'none';
+                catOpen.style.display = 'none';
+                bruiseMsg.textContent = '喵嗚！貓貓被打瘀青了！';
+                bruiseMsg.style.display = 'block';
+                document.body.style.background = '#1a1025';
+            }
+
             // 分數彈跳效果
             scoreEl.classList.remove('pop');
             void scoreEl.offsetWidth;
             scoreEl.classList.add('pop');
 
             // 張嘴
+            const closedSvg = isBruised ? catBruisedClosed : catClosed;
+            const openSvg = isBruised ? catBruisedOpen : catOpen;
+
+            // 隱藏所有
             catClosed.style.display = 'none';
-            catOpen.style.display = 'block';
+            catOpen.style.display = 'none';
+            catBruisedClosed.style.display = 'none';
+            catBruisedOpen.style.display = 'none';
+
+            openSvg.style.display = 'block';
             clearTimeout(mouthTimer);
             mouthTimer = setTimeout(() => {
-                catClosed.style.display = 'block';
-                catOpen.style.display = 'none';
+                openSvg.style.display = 'none';
+                closedSvg.style.display = 'block';
             }, 120);
 
             // 音效
