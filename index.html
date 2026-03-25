@@ -1128,138 +1128,62 @@
                 scoreEl.style.color = '#ff4757';
                 scoreEl.style.textShadow = '0 0 20px rgba(255, 71, 87, 0.8)';
             }
-            if (score === 1000 && catState === 'ko') {
-                catState = 'zombie';
-                koFlash.style.background = '#00ff00';
-                koFlash.style.opacity = '1';
-                setTimeout(() => { koFlash.style.opacity = '0'; koFlash.style.background = '#fff'; }, 200);
-                document.body.classList.add('screen-shake');
-                setTimeout(() => document.body.classList.remove('screen-shake'), 600);
-                bruiseMsg.textContent = pick(msgZombie);
-                bruiseMsg.style.color = '#00ff41';
-                bruiseMsg.style.fontSize = '28px';
-                bruiseMsg.style.textShadow = '0 0 20px rgba(0, 255, 65, 0.8)';
-                document.body.style.background = '#0a1a0a';
-                scoreEl.style.color = '#00ff41';
-                scoreEl.style.textShadow = '0 0 20px rgba(0, 255, 65, 0.8)';
-                spawnEmoji(emojiSets.zombie, 10);
-            }
-            if (score === 1500 && catState === 'zombie') {
-                catState = 'glitch';
-                koFlash.style.background = '#ff0000';
-                koFlash.style.opacity = '1';
-                setTimeout(() => { koFlash.style.opacity = '0'; setTimeout(() => { koFlash.style.opacity = '0.8'; setTimeout(() => { koFlash.style.opacity = '0'; koFlash.style.background = '#fff'; }, 80); }, 80); }, 100);
-                document.body.classList.add('screen-shake');
-                setTimeout(() => document.body.classList.remove('screen-shake'), 800);
-                bruiseMsg.textContent = pick(msgGlitch);
-                bruiseMsg.style.color = '#ff0040';
-                bruiseMsg.style.fontSize = '32px';
-                bruiseMsg.style.textShadow = '0 0 25px rgba(255, 0, 64, 0.9), 3px 0 #0ff, -3px 0 #f0f';
-                document.body.style.background = '#0a0010';
-                scoreEl.style.color = '#ff0040';
-                scoreEl.style.textShadow = '0 0 20px rgba(255, 0, 64, 0.8), 2px 0 #0ff, -2px 0 #f0f';
-                spawnEmoji(emojiSets.glitch, 15);
-            }
-            if (score === 2000 && catState === 'glitch') {
-                catState = 'chaos';
-                for (let i = 0; i < 5; i++) {
-                    setTimeout(() => {
-                        koFlash.style.background = `hsl(${randInt(0,360)}, 100%, 50%)`;
-                        koFlash.style.opacity = '0.8';
-                        setTimeout(() => { koFlash.style.opacity = '0'; }, 80);
-                    }, i * 120);
-                }
-                document.body.classList.add('screen-shake');
-                setTimeout(() => document.body.classList.remove('screen-shake'), 1000);
-                bruiseMsg.textContent = pick(msgChaos);
-                bruiseMsg.style.color = '#fff';
-                bruiseMsg.style.fontSize = '36px';
-                bruiseMsg.style.textShadow = '0 0 30px #fff, 0 0 60px #f0f, 0 0 90px #0ff';
-                document.body.style.background = '#000';
-                spawnEmoji(emojiSets.chaos, 25);
-            }
+            // 隨機主題設定
+            const randomThemes = {
+                zombie:    { flash: '#00ff00', color: '#00ff41', bg: '#0a1a0a', shadow: '0 0 20px rgba(0,255,65,0.8)', msgs: msgZombie, emojis: emojiSets.zombie },
+                glitch:    { flash: '#ff0000', color: '#ff0040', bg: '#0a0010', shadow: '0 0 25px rgba(255,0,64,0.9), 3px 0 #0ff, -3px 0 #f0f', msgs: msgGlitch, emojis: emojiSets.glitch },
+                chaos:     { flash: '#ff00ff', color: '#fff', bg: '#000', shadow: '0 0 30px #fff, 0 0 60px #f0f, 0 0 90px #0ff', msgs: msgChaos, emojis: emojiSets.chaos },
+                blackhole: { flash: '#000', color: '#a78bfa', bg: '#05000d', shadow: '0 0 25px rgba(167,139,250,0.9)', msgs: msgBlackhole, emojis: emojiSets.blackhole },
+                matrix:    { flash: '#00ff00', color: '#00ff41', bg: '#000800', shadow: '0 0 20px rgba(0,255,65,0.8)', msgs: msgMatrix, emojis: emojiSets.matrix, font: 'monospace' },
+                frozen:    { flash: '#88ddff', color: '#88ddff', bg: '#050a1a', shadow: '0 0 20px rgba(136,221,255,0.9)', msgs: msgFrozen, emojis: emojiSets.frozen },
+                inferno:   { flash: '#ff4400', color: '#ff4400', bg: '#1a0500', shadow: '0 0 25px rgba(255,68,0,0.9)', msgs: msgInferno, emojis: emojiSets.inferno },
+            };
+            const themeKeys = Object.keys(randomThemes);
+            const milestones = [1000, 1500, 2000, 2500, 3000, 3500, 4000];
 
-            if (score === 2500 && catState === 'chaos') {
-                catState = 'blackhole';
-                blackholeOverlay.style.opacity = '1';
-                koFlash.style.background = '#000';
-                koFlash.style.opacity = '1';
-                setTimeout(() => { koFlash.style.opacity = '0'; koFlash.style.background = '#fff'; }, 500);
-                document.body.classList.add('screen-shake');
-                setTimeout(() => document.body.classList.remove('screen-shake'), 1000);
-                bruiseMsg.textContent = pick(msgBlackhole);
-                bruiseMsg.style.color = '#a78bfa';
-                bruiseMsg.style.fontSize = '30px';
-                bruiseMsg.style.textShadow = '0 0 25px rgba(167, 139, 250, 0.9), 0 0 50px rgba(109, 40, 217, 0.5)';
-                document.body.style.background = '#05000d';
-                scoreEl.style.color = '#a78bfa';
-                scoreEl.style.textShadow = '0 0 20px rgba(167, 139, 250, 0.8)';
-                starsEl.style.display = 'none';
-                vortexParticles();
-                spawnEmoji(emojiSets.blackhole, 15);
-            }
-            if (score === 3000 && catState === 'blackhole') {
-                catState = 'matrix';
+            // 每 500 分（1000~4000）隨機切換主題
+            if (milestones.includes(score) && catState !== 'nirvana') {
+                // 清理前一個狀態的殘留
                 blackholeOverlay.style.opacity = '0';
-                startMatrix();
-                koFlash.style.background = '#00ff00';
-                koFlash.style.opacity = '0.8';
-                setTimeout(() => { koFlash.style.opacity = '0'; koFlash.style.background = '#fff'; }, 200);
-                document.body.classList.add('screen-shake');
-                setTimeout(() => document.body.classList.remove('screen-shake'), 600);
-                bruiseMsg.textContent = pick(msgMatrix);
-                bruiseMsg.style.color = '#00ff41';
-                bruiseMsg.style.fontSize = '28px';
-                bruiseMsg.style.textShadow = '0 0 20px rgba(0, 255, 65, 0.8), 0 0 40px rgba(0, 255, 0, 0.3)';
-                bruiseMsg.style.fontFamily = 'monospace';
-                document.body.style.background = '#000800';
-                scoreEl.style.color = '#00ff41';
-                scoreEl.style.fontFamily = 'monospace';
-                scoreEl.style.textShadow = '0 0 15px rgba(0, 255, 65, 0.8)';
-                spawnEmoji(emojiSets.matrix, 20);
-            }
-            if (score === 3500 && catState === 'matrix') {
-                catState = 'frozen';
                 matrixRunning = false;
                 matrixCanvas.style.opacity = '0';
-                koFlash.style.background = '#88ddff';
+
+                const newTheme = pick(themeKeys);
+                catState = newTheme;
+                const t = randomThemes[newTheme];
+
+                // 閃光
+                koFlash.style.background = t.flash;
                 koFlash.style.opacity = '1';
-                setTimeout(() => { koFlash.style.opacity = '0'; koFlash.style.background = '#fff'; }, 300);
+                setTimeout(() => { koFlash.style.opacity = '0'; koFlash.style.background = '#fff'; }, 200);
+
+                // 螢幕震動
                 document.body.classList.add('screen-shake');
                 setTimeout(() => document.body.classList.remove('screen-shake'), 800);
-                bruiseMsg.textContent = pick(msgFrozen);
-                bruiseMsg.style.color = '#88ddff';
-                bruiseMsg.style.fontSize = '30px';
-                bruiseMsg.style.fontFamily = 'Arial, sans-serif';
-                bruiseMsg.style.textShadow = '0 0 20px rgba(136, 221, 255, 0.9), 0 0 40px rgba(100, 180, 255, 0.5)';
-                document.body.style.background = '#050a1a';
-                scoreEl.style.color = '#88ddff';
-                scoreEl.style.fontFamily = 'Arial, sans-serif';
-                scoreEl.style.textShadow = '0 0 15px rgba(136, 221, 255, 0.8)';
-                spawnEmoji(emojiSets.frozen, 20);
+
+                // 主題樣式
+                bruiseMsg.textContent = pick(t.msgs);
+                bruiseMsg.style.color = t.color;
+                bruiseMsg.style.fontSize = randInt(26, 34) + 'px';
+                bruiseMsg.style.textShadow = t.shadow;
+                bruiseMsg.style.fontFamily = t.font || 'Arial, sans-serif';
+                bruiseMsg.style.display = 'block';
+                bruiseMsg.style.animation = 'none';
+                void bruiseMsg.offsetWidth;
+                bruiseMsg.style.animation = 'shake 0.5s ease-in-out';
+                document.body.style.background = t.bg;
+                scoreEl.style.color = t.color;
+                scoreEl.style.fontFamily = t.font || 'Arial, sans-serif';
+                scoreEl.style.textShadow = t.shadow;
+
+                // 主題特殊效果
+                if (newTheme === 'blackhole') { blackholeOverlay.style.opacity = '1'; vortexParticles(); starsEl.style.display = 'none'; }
+                if (newTheme === 'matrix') startMatrix();
+
+                spawnEmoji(t.emojis, randInt(10, 20));
             }
-            if (score === 4000 && catState === 'frozen') {
-                catState = 'inferno';
-                // 紅色爆炸閃光
-                for (let i = 0; i < 4; i++) {
-                    setTimeout(() => {
-                        koFlash.style.background = `hsl(${randInt(0,30)}, 100%, 50%)`;
-                        koFlash.style.opacity = '0.9';
-                        setTimeout(() => { koFlash.style.opacity = '0'; }, 100);
-                    }, i * 150);
-                }
-                document.body.classList.add('screen-shake');
-                setTimeout(() => document.body.classList.remove('screen-shake'), 1000);
-                bruiseMsg.textContent = pick(msgInferno);
-                bruiseMsg.style.color = '#ff4400';
-                bruiseMsg.style.fontSize = '32px';
-                bruiseMsg.style.textShadow = '0 0 25px rgba(255, 68, 0, 0.9), 0 0 50px rgba(255, 0, 0, 0.5)';
-                document.body.style.background = '#1a0500';
-                scoreEl.style.color = '#ff4400';
-                scoreEl.style.textShadow = '0 0 20px rgba(255, 68, 0, 0.8), 0 0 40px rgba(255, 0, 0, 0.3)';
-                spawnEmoji(emojiSets.inferno, 20);
-            }
-            if (score === 5000 && catState === 'inferno') {
+
+            if (score === 5000 && catState !== 'nirvana') {
                 catState = 'nirvana';
                 // 停掉矩陣
                 matrixRunning = false;
