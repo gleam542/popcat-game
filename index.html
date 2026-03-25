@@ -114,9 +114,69 @@
             60% { transform: translateX(-5px); }
             80% { transform: translateX(5px); }
         }
+
+        /* 500 KO 效果 */
+        .screen-shake {
+            animation: bigShake 0.6s ease-in-out;
+        }
+
+        @keyframes bigShake {
+            0%, 100% { transform: translate(0, 0) rotate(0); }
+            10% { transform: translate(-15px, -10px) rotate(-2deg); }
+            20% { transform: translate(15px, 10px) rotate(2deg); }
+            30% { transform: translate(-10px, 5px) rotate(-1deg); }
+            40% { transform: translate(10px, -5px) rotate(1deg); }
+            50% { transform: translate(-5px, 10px) rotate(-2deg); }
+            60% { transform: translate(5px, -10px) rotate(2deg); }
+            70% { transform: translate(-15px, 5px) rotate(-1deg); }
+            80% { transform: translate(15px, -5px) rotate(1deg); }
+            90% { transform: translate(-5px, -5px) rotate(0); }
+        }
+
+        .stars-container {
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
+            height: 40px;
+            animation: spinStars 2s linear infinite;
+            pointer-events: none;
+        }
+
+        @keyframes spinStars {
+            0% { transform: translateX(-50%) rotate(0deg); }
+            100% { transform: translateX(-50%) rotate(360deg); }
+        }
+
+        .star {
+            position: absolute;
+            font-size: 24px;
+            animation: twinkle 0.5s ease-in-out infinite alternate;
+        }
+
+        .star:nth-child(1) { left: 0; top: 5px; animation-delay: 0s; }
+        .star:nth-child(2) { left: 45px; top: -5px; animation-delay: 0.15s; }
+        .star:nth-child(3) { left: 90px; top: 5px; animation-delay: 0.3s; }
+
+        @keyframes twinkle {
+            0% { opacity: 0.4; transform: scale(0.8); }
+            100% { opacity: 1; transform: scale(1.2); }
+        }
+
+        #ko-flash {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: #fff;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 999;
+            transition: opacity 0.1s;
+        }
     </style>
 </head>
 <body>
+    <div id="ko-flash"></div>
     <h1>POP CAT!</h1>
     <div id="score">0</div>
     <div id="cat-container" onmousedown="popCat(event)" ontouchstart="popCat(event)">
@@ -258,6 +318,103 @@
             <line x1="182" y1="145" x2="182" y2="153" stroke="#deb887" stroke-width="1" transform="rotate(-20, 192, 148)"/>
             <line x1="203" y1="145" x2="203" y2="153" stroke="#deb887" stroke-width="1" transform="rotate(-20, 192, 148)"/>
         </svg>
+        <!-- KO 閉嘴貓 (500) -->
+        <svg id="cat-ko-closed" class="cat-svg" viewBox="0 0 300 300" style="display:none;">
+            <!-- 耳朵（破損） -->
+            <polygon points="60,120 90,30 130,110" fill="#5a3d7a"/>
+            <polygon points="70,110 95,50 120,105" fill="#7a5a9a"/>
+            <polygon points="240,120 210,30 170,110" fill="#5a3d7a"/>
+            <polygon points="230,110 205,50 180,105" fill="#7a5a9a"/>
+            <!-- 耳朵缺口 -->
+            <polygon points="215,45 225,55 210,60" fill="#1a0a25"/>
+            <!-- 頭 -->
+            <ellipse cx="150" cy="180" rx="110" ry="100" fill="#5a3d7a"/>
+            <!-- 臉內部 -->
+            <ellipse cx="150" cy="190" rx="85" ry="75" fill="#7a5a9a"/>
+            <!-- 大片瘀青 -->
+            <ellipse cx="100" cy="170" rx="30" ry="22" fill="#3d1f5c" opacity="0.6"/>
+            <ellipse cx="195" cy="165" rx="28" ry="20" fill="#2d1050" opacity="0.5"/>
+            <circle cx="130" cy="215" r="15" fill="#3d1f5c" opacity="0.4"/>
+            <ellipse cx="175" cy="205" rx="18" ry="12" fill="#2d1050" opacity="0.35"/>
+            <!-- 眼睛底 -->
+            <ellipse cx="115" cy="165" rx="18" ry="20" fill="#fff"/>
+            <ellipse cx="185" cy="165" rx="18" ry="20" fill="#fff"/>
+            <!-- 螺旋眼 -->
+            <path d="M115,165 m-8,0 a8,8 0 1,1 16,0 a6,6 0 1,0 -12,0 a4,4 0 1,1 8,0" stroke="#2d2d2d" stroke-width="2" fill="none"/>
+            <path d="M185,165 m-8,0 a8,8 0 1,1 16,0 a6,6 0 1,0 -12,0 a4,4 0 1,1 8,0" stroke="#2d2d2d" stroke-width="2" fill="none"/>
+            <!-- 眼淚 -->
+            <path d="M 98 175 Q 95 195 92 210" stroke="#48dbfb" stroke-width="3" fill="none" stroke-linecap="round" opacity="0.8"/>
+            <ellipse cx="91" cy="213" rx="4" ry="5" fill="#48dbfb" opacity="0.6"/>
+            <path d="M 202 175 Q 205 195 208 210" stroke="#48dbfb" stroke-width="3" fill="none" stroke-linecap="round" opacity="0.8"/>
+            <ellipse cx="209" cy="213" rx="4" ry="5" fill="#48dbfb" opacity="0.6"/>
+            <!-- 鼻子 -->
+            <ellipse cx="150" cy="195" rx="8" ry="5" fill="#993355"/>
+            <!-- 嘴（大哭） -->
+            <path d="M 125 210 Q 150 195 175 210" stroke="#2d2d2d" stroke-width="3" fill="none" stroke-linecap="round"/>
+            <!-- 鬍鬚（歪的） -->
+            <line x1="50" y1="195" x2="100" y2="200" stroke="#2d2d2d" stroke-width="2"/>
+            <line x1="48" y1="212" x2="98" y2="210" stroke="#2d2d2d" stroke-width="2"/>
+            <line x1="200" y1="200" x2="250" y2="195" stroke="#2d2d2d" stroke-width="2"/>
+            <line x1="202" y1="210" x2="252" y2="212" stroke="#2d2d2d" stroke-width="2"/>
+            <!-- OK繃 x3 -->
+            <rect x="175" y="135" width="35" height="16" rx="4" fill="#f5deb3" transform="rotate(-20, 192, 143)"/>
+            <rect x="85" y="145" width="35" height="16" rx="4" fill="#f5deb3" transform="rotate(15, 102, 153)"/>
+            <rect x="135" y="100" width="30" height="14" rx="4" fill="#f5deb3" transform="rotate(-5, 150, 107)"/>
+        </svg>
+        <!-- KO 張嘴貓 (500) -->
+        <svg id="cat-ko-open" class="cat-svg" viewBox="0 0 300 300" style="display:none;">
+            <!-- 耳朵（破損） -->
+            <polygon points="60,120 90,30 130,110" fill="#5a3d7a"/>
+            <polygon points="70,110 95,50 120,105" fill="#7a5a9a"/>
+            <polygon points="240,120 210,30 170,110" fill="#5a3d7a"/>
+            <polygon points="230,110 205,50 180,105" fill="#7a5a9a"/>
+            <polygon points="215,45 225,55 210,60" fill="#1a0a25"/>
+            <!-- 頭 -->
+            <ellipse cx="150" cy="180" rx="110" ry="100" fill="#5a3d7a"/>
+            <!-- 臉內部 -->
+            <ellipse cx="150" cy="190" rx="85" ry="75" fill="#7a5a9a"/>
+            <!-- 大片瘀青 -->
+            <ellipse cx="100" cy="170" rx="30" ry="22" fill="#3d1f5c" opacity="0.6"/>
+            <ellipse cx="195" cy="165" rx="28" ry="20" fill="#2d1050" opacity="0.5"/>
+            <circle cx="130" cy="215" r="15" fill="#3d1f5c" opacity="0.4"/>
+            <ellipse cx="175" cy="205" rx="18" ry="12" fill="#2d1050" opacity="0.35"/>
+            <!-- 眼睛底 -->
+            <ellipse cx="115" cy="160" rx="20" ry="24" fill="#fff"/>
+            <ellipse cx="185" cy="160" rx="20" ry="24" fill="#fff"/>
+            <!-- 螺旋眼 -->
+            <path d="M115,160 m-10,0 a10,10 0 1,1 20,0 a7,7 0 1,0 -14,0 a4,4 0 1,1 8,0" stroke="#2d2d2d" stroke-width="2" fill="none"/>
+            <path d="M185,160 m-10,0 a10,10 0 1,1 20,0 a7,7 0 1,0 -14,0 a4,4 0 1,1 8,0" stroke="#2d2d2d" stroke-width="2" fill="none"/>
+            <!-- 眼淚 -->
+            <path d="M 96 172 Q 92 192 88 210" stroke="#48dbfb" stroke-width="3" fill="none" stroke-linecap="round" opacity="0.8"/>
+            <ellipse cx="87" cy="213" rx="4" ry="5" fill="#48dbfb" opacity="0.6"/>
+            <path d="M 204 172 Q 208 192 212 210" stroke="#48dbfb" stroke-width="3" fill="none" stroke-linecap="round" opacity="0.8"/>
+            <ellipse cx="213" cy="213" rx="4" ry="5" fill="#48dbfb" opacity="0.6"/>
+            <!-- 鼻子 -->
+            <ellipse cx="150" cy="192" rx="8" ry="5" fill="#993355"/>
+            <!-- 張嘴大哭 -->
+            <ellipse cx="150" cy="222" rx="35" ry="25" fill="#2d2d2d"/>
+            <ellipse cx="150" cy="217" rx="28" ry="14" fill="#ff4757"/>
+            <!-- 舌頭 -->
+            <ellipse cx="150" cy="233" rx="14" ry="10" fill="#ff6b81"/>
+            <!-- 牙齒缺一顆 -->
+            <rect x="140" y="208" width="8" height="8" rx="1" fill="#fff"/>
+            <rect x="155" y="208" width="8" height="8" rx="1" fill="#fff"/>
+            <!-- 鬍鬚（歪的） -->
+            <line x1="50" y1="195" x2="95" y2="198" stroke="#2d2d2d" stroke-width="2"/>
+            <line x1="48" y1="210" x2="93" y2="208" stroke="#2d2d2d" stroke-width="2"/>
+            <line x1="207" y1="198" x2="250" y2="195" stroke="#2d2d2d" stroke-width="2"/>
+            <line x1="207" y1="208" x2="252" y2="210" stroke="#2d2d2d" stroke-width="2"/>
+            <!-- OK繃 x3 -->
+            <rect x="175" y="135" width="35" height="16" rx="4" fill="#f5deb3" transform="rotate(-20, 192, 143)"/>
+            <rect x="85" y="145" width="35" height="16" rx="4" fill="#f5deb3" transform="rotate(15, 102, 153)"/>
+            <rect x="135" y="100" width="30" height="14" rx="4" fill="#f5deb3" transform="rotate(-5, 150, 107)"/>
+        </svg>
+        <!-- 星星繞頭 -->
+        <div class="stars-container" id="stars" style="display:none;">
+            <span class="star">&#11088;</span>
+            <span class="star">&#11088;</span>
+            <span class="star">&#11088;</span>
+        </div>
     </div>
     <div id="bruise-msg"></div>
     <div id="pps">每秒點擊: 0</div>
@@ -266,13 +423,17 @@
     <script>
         let score = 0;
         let clicks = [];
-        let isBruised = false;
+        let catState = 'normal'; // normal, bruised, ko
         const scoreEl = document.getElementById('score');
         const catClosed = document.getElementById('cat-closed');
         const catOpen = document.getElementById('cat-open');
         const catBruisedClosed = document.getElementById('cat-bruised-closed');
         const catBruisedOpen = document.getElementById('cat-bruised-open');
+        const catKoClosed = document.getElementById('cat-ko-closed');
+        const catKoOpen = document.getElementById('cat-ko-open');
         const bruiseMsg = document.getElementById('bruise-msg');
+        const starsEl = document.getElementById('stars');
+        const koFlash = document.getElementById('ko-flash');
         const container = document.getElementById('cat-container');
         const ppsEl = document.getElementById('pps');
         let mouthTimer = null;
@@ -298,14 +459,36 @@
             score++;
             scoreEl.textContent = score;
 
-            // 到 100 分變瘀青
-            if (score === 100 && !isBruised) {
-                isBruised = true;
-                catClosed.style.display = 'none';
-                catOpen.style.display = 'none';
+            // 狀態切換
+            if (score === 100 && catState === 'normal') {
+                catState = 'bruised';
                 bruiseMsg.textContent = '喵嗚！貓貓被打瘀青了！';
                 bruiseMsg.style.display = 'block';
                 document.body.style.background = '#1a1025';
+            }
+            if (score === 500 && catState !== 'ko') {
+                catState = 'ko';
+                // 白光閃爍
+                koFlash.style.opacity = '1';
+                setTimeout(() => { koFlash.style.opacity = '0'; }, 150);
+                // 螢幕震動
+                document.body.classList.add('screen-shake');
+                setTimeout(() => document.body.classList.remove('screen-shake'), 600);
+                // 星星繞頭
+                starsEl.style.display = 'block';
+                // 更新訊息
+                bruiseMsg.textContent = '貓貓被打趴了！！！KO！！！';
+                bruiseMsg.style.color = '#ff4757';
+                bruiseMsg.style.fontSize = '30px';
+                bruiseMsg.style.textShadow = '0 0 20px rgba(255, 71, 87, 0.8)';
+                bruiseMsg.style.display = 'block';
+                bruiseMsg.style.animation = 'none';
+                void bruiseMsg.offsetWidth;
+                bruiseMsg.style.animation = 'shake 0.5s ease-in-out';
+                document.body.style.background = '#0d0515';
+                // 分數變紅
+                scoreEl.style.color = '#ff4757';
+                scoreEl.style.textShadow = '0 0 20px rgba(255, 71, 87, 0.8)';
             }
 
             // 分數彈跳效果
@@ -313,15 +496,19 @@
             void scoreEl.offsetWidth;
             scoreEl.classList.add('pop');
 
-            // 張嘴
-            const closedSvg = isBruised ? catBruisedClosed : catClosed;
-            const openSvg = isBruised ? catBruisedOpen : catOpen;
+            // 選擇對應的貓
+            let closedSvg, openSvg;
+            if (catState === 'ko') { closedSvg = catKoClosed; openSvg = catKoOpen; }
+            else if (catState === 'bruised') { closedSvg = catBruisedClosed; openSvg = catBruisedOpen; }
+            else { closedSvg = catClosed; openSvg = catOpen; }
 
             // 隱藏所有
             catClosed.style.display = 'none';
             catOpen.style.display = 'none';
             catBruisedClosed.style.display = 'none';
             catBruisedOpen.style.display = 'none';
+            catKoClosed.style.display = 'none';
+            catKoOpen.style.display = 'none';
 
             openSvg.style.display = 'block';
             clearTimeout(mouthTimer);
@@ -331,7 +518,22 @@
             }, 120);
 
             // 音效
-            playPop();
+            if (catState === 'ko') {
+                playPop();
+                // 額外低沉重擊音
+                const osc2 = audioCtx.createOscillator();
+                const gain2 = audioCtx.createGain();
+                osc2.connect(gain2);
+                gain2.connect(audioCtx.destination);
+                osc2.frequency.setValueAtTime(80 + Math.random() * 40, audioCtx.currentTime);
+                osc2.frequency.exponentialRampToValueAtTime(30, audioCtx.currentTime + 0.2);
+                gain2.gain.setValueAtTime(0.4, audioCtx.currentTime);
+                gain2.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
+                osc2.start(audioCtx.currentTime);
+                osc2.stop(audioCtx.currentTime + 0.2);
+            } else {
+                playPop();
+            }
 
             // +1 浮動文字
             const popText = document.createElement('div');
@@ -343,8 +545,11 @@
             setTimeout(() => popText.remove(), 800);
 
             // 粒子特效
-            const colors = ['#ff6b6b', '#ffe66d', '#48dbfb', '#ff9ff3', '#54a0ff'];
-            for (let i = 0; i < 6; i++) {
+            const colors = catState === 'ko'
+                ? ['#ff4757', '#8b0000', '#5a3d7a', '#48dbfb', '#fff']
+                : ['#ff6b6b', '#ffe66d', '#48dbfb', '#ff9ff3', '#54a0ff'];
+            const particleCount = catState === 'ko' ? 12 : 6;
+            for (let i = 0; i < particleCount; i++) {
                 const p = document.createElement('div');
                 p.className = 'particle';
                 p.style.background = colors[Math.floor(Math.random() * colors.length)];
