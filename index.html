@@ -685,6 +685,8 @@
             chaos: ['💀', '🌈', '🎆', '🎇', '✨', '💫', '🔮', '🎪', '🤯', '👾', '🛸', '🌪️', '☄️', '🃏', '🎭', '💣'],
             blackhole: ['🕳️', '🌑', '🌀', '💫', '☄️', '🌌', '♾️', '⚫'],
             matrix: ['0', '1', '🟩', '💊', '🐈', '🖥️', '⌨️', '📟'],
+            frozen: ['❄️', '🧊', '🥶', '⛄', '🌨️', '💎', '🔵', '🏔️'],
+            inferno: ['🔥', '🌋', '☀️', '💥', '🧨', '♨️', '🌡️', '😈', '👹'],
             nirvana: ['✨', '🌟', '⭐', '💛', '👑', '🏆', '🎆', '🎇', '🌈', '🦋', '🕊️', '💎']
         };
         const msgZombie = ['貓貓變殭屍了...', '腦...漿...', '喵...嗚...不死之身！', '殭屍貓覺醒！'];
@@ -692,6 +694,8 @@
         const msgChaos = ['混沌降臨！', '宇宙在顫抖！', '這不是演習！！', '救命啊啊啊！！', '貓界末日！', '???!!!'];
         const msgBlackhole = ['被黑洞吞噬中...', '時空扭曲！', '事件視界突破！', '重力崩塌！', '喵...的...維度...'];
         const msgMatrix = ['Wake up, Cat...', '紅藥丸還是藍藥丸？', 'There is no spoon', '你看到程式碼了嗎？', 'Follow the white cat'];
+        const msgFrozen = ['貓貓被凍住了...', '冰封世界！', '絕對零度！', '冰河時期降臨！', '喵...好...冷...'];
+        const msgInferno = ['燃燒吧！貓貓！', '地獄業火！', '這溫度不對！！', '貓貓著火了！！！', '太熱了啊啊啊！'];
         const msgNirvana = ['涅槃重生！', '貓神降臨！', '永恆之光！', '超越一切！', '傳說中的金色貓咪！'];
 
         // 隨機顏色閃光
@@ -952,6 +956,83 @@
             for (let i = 0; i < count; i++) pick(effects)();
         }
 
+        // === 3500: 冰凍模式 ===
+        function frozenEffects() {
+            const effects = [
+                () => spawnEmoji(emojiSets.frozen, randInt(2, 5)),
+                () => { container.style.filter = `hue-rotate(${randInt(180,220)}deg) brightness(${rand(1,1.8)}) saturate(${rand(0.5,2)})`; setTimeout(() => { container.style.filter = ''; }, 400); },
+                () => randomCatAnim(rand(0.3, 0.8)),
+                () => { document.body.style.filter = `hue-rotate(${randInt(180,210)}deg) brightness(${rand(0.8,1.5)})`; setTimeout(() => { document.body.style.filter = ''; }, 250); },
+                () => randomShake(12),
+                () => {
+                    // 冰碎音效
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.connect(gain); gain.connect(audioCtx.destination);
+                    osc.type = 'square';
+                    osc.frequency.setValueAtTime(rand(2000, 4000), audioCtx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(rand(500, 1000), audioCtx.currentTime + 0.08);
+                    gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.08);
+                    osc.start(audioCtx.currentTime);
+                    osc.stop(audioCtx.currentTime + 0.08);
+                },
+                () => { bruiseMsg.textContent = pick(msgFrozen); },
+                () => { scoreEl.style.color = `hsl(${randInt(190,220)}, 100%, ${randInt(60,80)}%)`; },
+                () => {
+                    // 隨機凍結（貓咪短暫停住）
+                    container.style.transition = 'filter 0.1s';
+                    container.style.filter = 'brightness(2) saturate(0.3)';
+                    setTimeout(() => { container.style.filter = ''; container.style.transition = ''; }, rand(100, 300));
+                },
+                () => flashColor(),
+            ];
+            const count = randInt(2, 4);
+            for (let i = 0; i < count; i++) pick(effects)();
+        }
+
+        // === 4000: 地獄火模式 ===
+        function infernoEffects() {
+            const effects = [
+                () => spawnEmoji(emojiSets.inferno, randInt(3, 6)),
+                () => { container.style.filter = `hue-rotate(${randInt(-20,20)}deg) saturate(${rand(2,4)}) brightness(${rand(0.8,1.5)})`; setTimeout(() => { container.style.filter = ''; }, 300); },
+                () => randomCatAnim(rand(0.2, 0.5)),
+                () => {
+                    // 火焰背景閃爍
+                    const colors = ['#ff0000', '#ff4400', '#ff6600', '#ff8800', '#ffaa00'];
+                    document.body.style.background = pick(colors);
+                    setTimeout(() => { document.body.style.background = '#1a0500'; }, 150);
+                },
+                () => randomShake(20),
+                () => {
+                    // 爆裂音
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.connect(gain); gain.connect(audioCtx.destination);
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(rand(100, 300), audioCtx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(rand(30, 80), audioCtx.currentTime + 0.15);
+                    gain.gain.setValueAtTime(0.25, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
+                    osc.start(audioCtx.currentTime);
+                    osc.stop(audioCtx.currentTime + 0.15);
+                },
+                () => { bruiseMsg.textContent = pick(msgInferno); },
+                () => { scoreEl.style.color = `hsl(${randInt(0,30)}, 100%, ${randInt(50,70)}%)`; },
+                () => { container.style.transform = `scale(${rand(0.5,1.5)}) rotate(${rand(-30,30)}deg)`; setTimeout(() => { container.style.transform = ''; }, 400); },
+                () => glitchEffect(),
+                () => {
+                    // 紅色閃光
+                    colorFlash.style.background = `hsl(${randInt(0,30)}, 100%, 50%)`;
+                    colorFlash.style.opacity = '0.5';
+                    setTimeout(() => { colorFlash.style.opacity = '0'; }, 120);
+                },
+                () => { document.body.style.filter = `brightness(${rand(1.5,3)}) saturate(${rand(2,4)})`; setTimeout(() => { document.body.style.filter = ''; }, 150); },
+            ];
+            const count = randInt(3, 5);
+            for (let i = 0; i < count; i++) pick(effects)();
+        }
+
         // === 5000: 涅槃模式 ===
         function spawnFirework(x, y) {
             const fw = document.createElement('div');
@@ -1137,7 +1218,48 @@
                 scoreEl.style.textShadow = '0 0 15px rgba(0, 255, 65, 0.8)';
                 spawnEmoji(emojiSets.matrix, 20);
             }
-            if (score === 5000 && catState === 'matrix') {
+            if (score === 3500 && catState === 'matrix') {
+                catState = 'frozen';
+                matrixRunning = false;
+                matrixCanvas.style.opacity = '0';
+                koFlash.style.background = '#88ddff';
+                koFlash.style.opacity = '1';
+                setTimeout(() => { koFlash.style.opacity = '0'; koFlash.style.background = '#fff'; }, 300);
+                document.body.classList.add('screen-shake');
+                setTimeout(() => document.body.classList.remove('screen-shake'), 800);
+                bruiseMsg.textContent = pick(msgFrozen);
+                bruiseMsg.style.color = '#88ddff';
+                bruiseMsg.style.fontSize = '30px';
+                bruiseMsg.style.fontFamily = 'Arial, sans-serif';
+                bruiseMsg.style.textShadow = '0 0 20px rgba(136, 221, 255, 0.9), 0 0 40px rgba(100, 180, 255, 0.5)';
+                document.body.style.background = '#050a1a';
+                scoreEl.style.color = '#88ddff';
+                scoreEl.style.fontFamily = 'Arial, sans-serif';
+                scoreEl.style.textShadow = '0 0 15px rgba(136, 221, 255, 0.8)';
+                spawnEmoji(emojiSets.frozen, 20);
+            }
+            if (score === 4000 && catState === 'frozen') {
+                catState = 'inferno';
+                // 紅色爆炸閃光
+                for (let i = 0; i < 4; i++) {
+                    setTimeout(() => {
+                        koFlash.style.background = `hsl(${randInt(0,30)}, 100%, 50%)`;
+                        koFlash.style.opacity = '0.9';
+                        setTimeout(() => { koFlash.style.opacity = '0'; }, 100);
+                    }, i * 150);
+                }
+                document.body.classList.add('screen-shake');
+                setTimeout(() => document.body.classList.remove('screen-shake'), 1000);
+                bruiseMsg.textContent = pick(msgInferno);
+                bruiseMsg.style.color = '#ff4400';
+                bruiseMsg.style.fontSize = '32px';
+                bruiseMsg.style.textShadow = '0 0 25px rgba(255, 68, 0, 0.9), 0 0 50px rgba(255, 0, 0, 0.5)';
+                document.body.style.background = '#1a0500';
+                scoreEl.style.color = '#ff4400';
+                scoreEl.style.textShadow = '0 0 20px rgba(255, 68, 0, 0.8), 0 0 40px rgba(255, 0, 0, 0.3)';
+                spawnEmoji(emojiSets.inferno, 20);
+            }
+            if (score === 5000 && catState === 'inferno') {
                 catState = 'nirvana';
                 // 停掉矩陣
                 matrixRunning = false;
@@ -1175,6 +1297,8 @@
             if (catState === 'chaos') chaosEffects();
             if (catState === 'blackhole') blackholeEffects();
             if (catState === 'matrix') matrixEffects();
+            if (catState === 'frozen') frozenEffects();
+            if (catState === 'inferno') infernoEffects();
             if (catState === 'nirvana') nirvanaEffects();
 
             // 分數彈跳效果
@@ -1185,7 +1309,7 @@
             // 選擇對應的貓
             let closedSvg, openSvg;
             if (catState === 'nirvana') { closedSvg = catGoldClosed; openSvg = catGoldOpen; }
-            else if (['ko', 'zombie', 'glitch', 'chaos', 'blackhole', 'matrix'].includes(catState)) { closedSvg = catKoClosed; openSvg = catKoOpen; }
+            else if (['ko', 'zombie', 'glitch', 'chaos', 'blackhole', 'matrix', 'frozen', 'inferno'].includes(catState)) { closedSvg = catKoClosed; openSvg = catKoOpen; }
             else if (catState === 'bruised') { closedSvg = catBruisedClosed; openSvg = catBruisedOpen; }
             else { closedSvg = catClosed; openSvg = catOpen; }
 
@@ -1208,7 +1332,7 @@
 
             // 音效
             playPop();
-            if (['ko', 'zombie', 'glitch', 'chaos', 'blackhole', 'matrix'].includes(catState)) {
+            if (['ko', 'zombie', 'glitch', 'chaos', 'blackhole', 'matrix', 'frozen', 'inferno'].includes(catState)) {
                 const osc2 = audioCtx.createOscillator();
                 const gain2 = audioCtx.createGain();
                 osc2.connect(gain2);
@@ -1235,6 +1359,12 @@
             if (catState === 'nirvana') {
                 colors = ['#ffd700', '#fff4a3', '#ffa500', '#fff', '#ffec8b', '#ffe066'];
                 particleCount = 15;
+            } else if (catState === 'inferno') {
+                colors = ['#ff0000', '#ff4400', '#ff6600', '#ff8800', '#ffaa00', '#fff'];
+                particleCount = 18;
+            } else if (catState === 'frozen') {
+                colors = ['#88ddff', '#aaeeff', '#66bbee', '#fff', '#cceeff', '#4499cc'];
+                particleCount = 14;
             } else if (catState === 'matrix') {
                 colors = ['#00ff41', '#008f11', '#003b00', '#00ff00', '#fff'];
                 particleCount = 12;
