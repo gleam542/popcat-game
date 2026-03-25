@@ -787,6 +787,35 @@
             osc.stop(audioCtx.currentTime + 0.15);
         }
 
+        // === 100: 瘀青模式 - 每次點擊隨機 1 個效果 ===
+        function bruisedEffects() {
+            const effects = [
+                () => randomCatAnim(0.4),
+                () => randomFilter(),
+                () => flashColor(),
+                () => randomShake(5),
+                () => randomSound(),
+                () => spawnEmoji(['😿', '😾', '🙀', '💢', '😵'], randInt(1, 2)),
+            ];
+            pick(effects)();
+        }
+
+        // === 500: KO模式 - 每次點擊隨機 1~2 個效果 ===
+        function koEffects() {
+            const effects = [
+                () => randomCatAnim(0.3),
+                () => randomFilter(),
+                () => flashColor(),
+                () => randomShake(8),
+                () => randomSound(),
+                () => randomSize(),
+                () => spawnEmoji(['💀', '⭐', '💫', '😵‍💫', '🌀', '💥'], randInt(1, 3)),
+                () => { scoreEl.style.transform = `rotate(${rand(-15,15)}deg)`; setTimeout(() => { scoreEl.style.transform = ''; }, 200); },
+            ];
+            const count = randInt(1, 2);
+            for (let i = 0; i < count; i++) pick(effects)();
+        }
+
         // === 1000: 殭屍模式 - 每次點擊隨機 1~2 個效果 ===
         function zombieEffects() {
             const effects = [
@@ -1139,6 +1168,8 @@
             }
 
             // 隨機效果觸發
+            if (catState === 'bruised') bruisedEffects();
+            if (catState === 'ko') koEffects();
             if (catState === 'zombie') zombieEffects();
             if (catState === 'glitch') glitchEffects();
             if (catState === 'chaos') chaosEffects();
