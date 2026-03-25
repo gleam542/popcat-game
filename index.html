@@ -173,10 +173,94 @@
             z-index: 999;
             transition: opacity 0.1s;
         }
+
+        /* 1000+ 隨機效果 */
+        .emoji-float {
+            position: fixed;
+            font-size: 40px;
+            pointer-events: none;
+            z-index: 998;
+            animation: emojiDrop 1.5s ease-in forwards;
+        }
+
+        @keyframes emojiDrop {
+            0% { opacity: 1; transform: translateY(0) rotate(0deg) scale(1); }
+            100% { opacity: 0; transform: translateY(100vh) rotate(720deg) scale(0.3); }
+        }
+
+        @keyframes catSpin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes catBounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-60px); }
+        }
+
+        @keyframes catWobble {
+            0% { transform: rotate(0deg) scale(1); }
+            25% { transform: rotate(-15deg) scale(1.1); }
+            50% { transform: rotate(15deg) scale(0.9); }
+            75% { transform: rotate(-10deg) scale(1.05); }
+            100% { transform: rotate(0deg) scale(1); }
+        }
+
+        @keyframes catJelly {
+            0% { transform: scaleX(1) scaleY(1); }
+            25% { transform: scaleX(1.3) scaleY(0.7); }
+            50% { transform: scaleX(0.7) scaleY(1.3); }
+            75% { transform: scaleX(1.15) scaleY(0.85); }
+            100% { transform: scaleX(1) scaleY(1); }
+        }
+
+        @keyframes catFlipX {
+            0% { transform: perspective(400px) rotateY(0deg); }
+            100% { transform: perspective(400px) rotateY(360deg); }
+        }
+
+        @keyframes catFlipY {
+            0% { transform: perspective(400px) rotateX(0deg); }
+            100% { transform: perspective(400px) rotateX(360deg); }
+        }
+
+        @keyframes screenPulse {
+            0%, 100% { filter: brightness(1); }
+            50% { filter: brightness(2); }
+        }
+
+        @keyframes glitchShift {
+            0% { clip-path: inset(0 0 90% 0); transform: translateX(-10px); }
+            20% { clip-path: inset(30% 0 50% 0); transform: translateX(10px); }
+            40% { clip-path: inset(60% 0 20% 0); transform: translateX(-5px); }
+            60% { clip-path: inset(10% 0 70% 0); transform: translateX(5px); }
+            80% { clip-path: inset(80% 0 5% 0); transform: translateX(-10px); }
+            100% { clip-path: inset(0); transform: translateX(0); }
+        }
+
+        @keyframes rainbowBg {
+            0% { background-color: #ff0000; }
+            17% { background-color: #ff8800; }
+            33% { background-color: #ffff00; }
+            50% { background-color: #00ff00; }
+            67% { background-color: #0088ff; }
+            83% { background-color: #8800ff; }
+            100% { background-color: #ff0000; }
+        }
+
+        .screen-flash-color {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            pointer-events: none;
+            z-index: 997;
+            opacity: 0;
+            transition: opacity 0.15s;
+        }
     </style>
 </head>
 <body>
     <div id="ko-flash"></div>
+    <div id="color-flash" class="screen-flash-color"></div>
     <h1>POP CAT!</h1>
     <div id="score">0</div>
     <div id="cat-container" onmousedown="popCat(event)" ontouchstart="popCat(event)">
@@ -423,7 +507,7 @@
     <script>
         let score = 0;
         let clicks = [];
-        let catState = 'normal'; // normal, bruised, ko
+        let catState = 'normal'; // normal, bruised, ko, zombie, glitch, chaos
         const scoreEl = document.getElementById('score');
         const catClosed = document.getElementById('cat-closed');
         const catOpen = document.getElementById('cat-open');
@@ -436,7 +520,171 @@
         const koFlash = document.getElementById('ko-flash');
         const container = document.getElementById('cat-container');
         const ppsEl = document.getElementById('pps');
+        const colorFlash = document.getElementById('color-flash');
         let mouthTimer = null;
+
+        // 隨機工具
+        const rand = (min, max) => Math.random() * (max - min) + min;
+        const randInt = (min, max) => Math.floor(rand(min, max + 1));
+        const pick = arr => arr[Math.floor(Math.random() * arr.length)];
+
+        const catAnimations = ['catSpin', 'catBounce', 'catWobble', 'catJelly', 'catFlipX', 'catFlipY'];
+        const emojiSets = {
+            zombie: ['💀', '🧟', '☠️', '🦴', '🧠', '👻', '🪦', '⚰️'],
+            glitch: ['⚡', '💥', '🔥', '❌', '⚠️', '🔴', '💢', '🌀', '📛', '🆘'],
+            chaos: ['💀', '🌈', '🎆', '🎇', '✨', '💫', '🔮', '🎪', '🤯', '👾', '🛸', '🌪️', '☄️', '🃏', '🎭', '💣']
+        };
+        const msgZombie = ['貓貓變殭屍了...', '腦...漿...', '喵...嗚...不死之身！', '殭屍貓覺醒！'];
+        const msgGlitch = ['系̸̢統̶錯̵誤̸', 'E̷R̶R̷O̶R̵ ̷4̶0̷4̵', '貓貓.exe 崩潰了', '現̸實̶裂̵開̸了̵'];
+        const msgChaos = ['混沌降臨！', '宇宙在顫抖！', '這不是演習！！', '救命啊啊啊！！', '貓界末日！', '???!!!'];
+
+        // 隨機顏色閃光
+        function flashColor() {
+            const c = `hsl(${randInt(0,360)}, 100%, 50%)`;
+            colorFlash.style.background = c;
+            colorFlash.style.opacity = '0.4';
+            setTimeout(() => { colorFlash.style.opacity = '0'; }, 150);
+        }
+
+        // 噴射 emoji
+        function spawnEmoji(set, count) {
+            for (let i = 0; i < count; i++) {
+                const e = document.createElement('div');
+                e.className = 'emoji-float';
+                e.textContent = pick(set);
+                e.style.left = rand(5, 90) + 'vw';
+                e.style.top = rand(-10, 10) + '%';
+                e.style.fontSize = rand(20, 60) + 'px';
+                e.style.animationDuration = rand(0.8, 2) + 's';
+                document.body.appendChild(e);
+                setTimeout(() => e.remove(), 2000);
+            }
+        }
+
+        // 隨機貓咪動畫
+        function randomCatAnim(duration) {
+            const anim = pick(catAnimations);
+            container.style.animation = `${anim} ${duration || 0.5}s ease-in-out`;
+            setTimeout(() => { container.style.animation = ''; }, (duration || 0.5) * 1000);
+        }
+
+        // 隨機濾鏡
+        function randomFilter() {
+            const filters = [
+                `hue-rotate(${randInt(0,360)}deg)`,
+                `saturate(${rand(2,5)})`,
+                `brightness(${rand(0.5,2)})`,
+                `contrast(${rand(1.5,3)})`,
+                `invert(${rand(0.3,1)})`,
+                `sepia(${rand(0.5,1)})`,
+            ];
+            const f = pick(filters);
+            container.style.filter = f;
+            setTimeout(() => { container.style.filter = ''; }, 300);
+        }
+
+        // Glitch 抖動
+        function glitchEffect() {
+            container.style.animation = `glitchShift 0.3s steps(6) ${randInt(1,3)}`;
+            setTimeout(() => { container.style.animation = ''; }, 900);
+        }
+
+        // 隨機變大小
+        function randomSize() {
+            const s = rand(0.5, 1.8);
+            container.style.transform = `scale(${s})`;
+            setTimeout(() => { container.style.transform = ''; }, 400);
+        }
+
+        // 隨機位移
+        function randomOffset() {
+            const x = rand(-100, 100);
+            const y = rand(-50, 50);
+            container.style.transform = `translate(${x}px, ${y}px)`;
+            setTimeout(() => { container.style.transform = ''; }, 300);
+        }
+
+        // 背景隨機色
+        function randomBg() {
+            document.body.style.background = `hsl(${randInt(0,360)}, ${randInt(30,80)}%, ${randInt(5,20)}%)`;
+        }
+
+        // 螢幕震動（隨機強度）
+        function randomShake(intensity) {
+            const i = intensity || 15;
+            document.body.style.transform = `translate(${rand(-i,i)}px, ${rand(-i,i)}px) rotate(${rand(-3,3)}deg)`;
+            setTimeout(() => { document.body.style.transform = ''; }, 100);
+        }
+
+        // 隨機音效
+        function randomSound() {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.type = pick(['sine', 'square', 'sawtooth', 'triangle']);
+            osc.frequency.setValueAtTime(rand(50, 2000), audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(rand(20, 800), audioCtx.currentTime + 0.15);
+            gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
+            osc.start(audioCtx.currentTime);
+            osc.stop(audioCtx.currentTime + 0.15);
+        }
+
+        // === 1000: 殭屍模式 - 每次點擊隨機 1~2 個效果 ===
+        function zombieEffects() {
+            const effects = [
+                () => spawnEmoji(emojiSets.zombie, randInt(1, 3)),
+                () => randomCatAnim(0.4),
+                () => randomFilter(),
+                () => flashColor(),
+                () => randomShake(10),
+                () => randomSound(),
+            ];
+            const count = randInt(1, 2);
+            for (let i = 0; i < count; i++) pick(effects)();
+        }
+
+        // === 1500: 故障模式 - 每次點擊隨機 2~3 個效果 ===
+        function glitchEffects() {
+            const effects = [
+                () => spawnEmoji(emojiSets.glitch, randInt(2, 5)),
+                () => glitchEffect(),
+                () => randomFilter(),
+                () => randomCatAnim(0.3),
+                () => flashColor(),
+                () => randomShake(20),
+                () => randomBg(),
+                () => randomSize(),
+                () => randomSound(),
+                () => { scoreEl.style.transform = `rotate(${rand(-30,30)}deg) scale(${rand(0.8,1.5)})`; setTimeout(() => { scoreEl.style.transform = ''; }, 300); },
+            ];
+            const count = randInt(2, 3);
+            for (let i = 0; i < count; i++) pick(effects)();
+        }
+
+        // === 2000+: 混沌模式 - 每次點擊隨機 3~6 個效果，全開 ===
+        function chaosEffects() {
+            const effects = [
+                () => spawnEmoji(emojiSets.chaos, randInt(3, 8)),
+                () => glitchEffect(),
+                () => randomFilter(),
+                () => randomCatAnim(rand(0.2, 0.6)),
+                () => flashColor(),
+                () => randomShake(30),
+                () => randomBg(),
+                () => randomSize(),
+                () => randomOffset(),
+                () => randomSound(),
+                () => { scoreEl.style.transform = `rotate(${rand(-45,45)}deg) scale(${rand(0.5,2)})`; setTimeout(() => { scoreEl.style.transform = ''; }, 400); },
+                () => { scoreEl.style.color = `hsl(${randInt(0,360)}, 100%, 60%)`; },
+                () => { bruiseMsg.textContent = pick(msgChaos); bruiseMsg.style.color = `hsl(${randInt(0,360)}, 100%, 60%)`; },
+                () => { document.body.style.filter = `hue-rotate(${randInt(0,360)}deg)`; setTimeout(() => { document.body.style.filter = ''; }, 200); },
+                () => { container.style.transform = `rotate(${rand(-180,180)}deg) scale(${rand(0.3,2)})`; setTimeout(() => { container.style.transform = ''; }, 500); },
+            ];
+            const count = randInt(3, 6);
+            for (let i = 0; i < count; i++) pick(effects)();
+        }
 
         // 音效
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -466,17 +714,13 @@
                 bruiseMsg.style.display = 'block';
                 document.body.style.background = '#1a1025';
             }
-            if (score === 500 && catState !== 'ko') {
+            if (score === 500 && catState === 'bruised') {
                 catState = 'ko';
-                // 白光閃爍
                 koFlash.style.opacity = '1';
                 setTimeout(() => { koFlash.style.opacity = '0'; }, 150);
-                // 螢幕震動
                 document.body.classList.add('screen-shake');
                 setTimeout(() => document.body.classList.remove('screen-shake'), 600);
-                // 星星繞頭
                 starsEl.style.display = 'block';
-                // 更新訊息
                 bruiseMsg.textContent = '貓貓被打趴了！！！KO！！！';
                 bruiseMsg.style.color = '#ff4757';
                 bruiseMsg.style.fontSize = '30px';
@@ -486,10 +730,64 @@
                 void bruiseMsg.offsetWidth;
                 bruiseMsg.style.animation = 'shake 0.5s ease-in-out';
                 document.body.style.background = '#0d0515';
-                // 分數變紅
                 scoreEl.style.color = '#ff4757';
                 scoreEl.style.textShadow = '0 0 20px rgba(255, 71, 87, 0.8)';
             }
+            if (score === 1000 && catState === 'ko') {
+                catState = 'zombie';
+                koFlash.style.background = '#00ff00';
+                koFlash.style.opacity = '1';
+                setTimeout(() => { koFlash.style.opacity = '0'; koFlash.style.background = '#fff'; }, 200);
+                document.body.classList.add('screen-shake');
+                setTimeout(() => document.body.classList.remove('screen-shake'), 600);
+                bruiseMsg.textContent = pick(msgZombie);
+                bruiseMsg.style.color = '#00ff41';
+                bruiseMsg.style.fontSize = '28px';
+                bruiseMsg.style.textShadow = '0 0 20px rgba(0, 255, 65, 0.8)';
+                document.body.style.background = '#0a1a0a';
+                scoreEl.style.color = '#00ff41';
+                scoreEl.style.textShadow = '0 0 20px rgba(0, 255, 65, 0.8)';
+                spawnEmoji(emojiSets.zombie, 10);
+            }
+            if (score === 1500 && catState === 'zombie') {
+                catState = 'glitch';
+                koFlash.style.background = '#ff0000';
+                koFlash.style.opacity = '1';
+                setTimeout(() => { koFlash.style.opacity = '0'; setTimeout(() => { koFlash.style.opacity = '0.8'; setTimeout(() => { koFlash.style.opacity = '0'; koFlash.style.background = '#fff'; }, 80); }, 80); }, 100);
+                document.body.classList.add('screen-shake');
+                setTimeout(() => document.body.classList.remove('screen-shake'), 800);
+                bruiseMsg.textContent = pick(msgGlitch);
+                bruiseMsg.style.color = '#ff0040';
+                bruiseMsg.style.fontSize = '32px';
+                bruiseMsg.style.textShadow = '0 0 25px rgba(255, 0, 64, 0.9), 3px 0 #0ff, -3px 0 #f0f';
+                document.body.style.background = '#0a0010';
+                scoreEl.style.color = '#ff0040';
+                scoreEl.style.textShadow = '0 0 20px rgba(255, 0, 64, 0.8), 2px 0 #0ff, -2px 0 #f0f';
+                spawnEmoji(emojiSets.glitch, 15);
+            }
+            if (score === 2000 && catState === 'glitch') {
+                catState = 'chaos';
+                for (let i = 0; i < 5; i++) {
+                    setTimeout(() => {
+                        koFlash.style.background = `hsl(${randInt(0,360)}, 100%, 50%)`;
+                        koFlash.style.opacity = '0.8';
+                        setTimeout(() => { koFlash.style.opacity = '0'; }, 80);
+                    }, i * 120);
+                }
+                document.body.classList.add('screen-shake');
+                setTimeout(() => document.body.classList.remove('screen-shake'), 1000);
+                bruiseMsg.textContent = pick(msgChaos);
+                bruiseMsg.style.color = '#fff';
+                bruiseMsg.style.fontSize = '36px';
+                bruiseMsg.style.textShadow = '0 0 30px #fff, 0 0 60px #f0f, 0 0 90px #0ff';
+                document.body.style.background = '#000';
+                spawnEmoji(emojiSets.chaos, 25);
+            }
+
+            // 隨機效果觸發
+            if (catState === 'zombie') zombieEffects();
+            if (catState === 'glitch') glitchEffects();
+            if (catState === 'chaos') chaosEffects();
 
             // 分數彈跳效果
             scoreEl.classList.remove('pop');
@@ -498,7 +796,7 @@
 
             // 選擇對應的貓
             let closedSvg, openSvg;
-            if (catState === 'ko') { closedSvg = catKoClosed; openSvg = catKoOpen; }
+            if (['ko', 'zombie', 'glitch', 'chaos'].includes(catState)) { closedSvg = catKoClosed; openSvg = catKoOpen; }
             else if (catState === 'bruised') { closedSvg = catBruisedClosed; openSvg = catBruisedOpen; }
             else { closedSvg = catClosed; openSvg = catOpen; }
 
@@ -518,9 +816,8 @@
             }, 120);
 
             // 音效
-            if (catState === 'ko') {
-                playPop();
-                // 額外低沉重擊音
+            playPop();
+            if (['ko', 'zombie', 'glitch', 'chaos'].includes(catState)) {
                 const osc2 = audioCtx.createOscillator();
                 const gain2 = audioCtx.createGain();
                 osc2.connect(gain2);
@@ -531,8 +828,6 @@
                 gain2.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
                 osc2.start(audioCtx.currentTime);
                 osc2.stop(audioCtx.currentTime + 0.2);
-            } else {
-                playPop();
             }
 
             // +1 浮動文字
@@ -545,10 +840,23 @@
             setTimeout(() => popText.remove(), 800);
 
             // 粒子特效
-            const colors = catState === 'ko'
-                ? ['#ff4757', '#8b0000', '#5a3d7a', '#48dbfb', '#fff']
-                : ['#ff6b6b', '#ffe66d', '#48dbfb', '#ff9ff3', '#54a0ff'];
-            const particleCount = catState === 'ko' ? 12 : 6;
+            let colors, particleCount;
+            if (catState === 'chaos') {
+                colors = Array.from({length: 8}, () => `hsl(${randInt(0,360)}, 100%, 60%)`);
+                particleCount = 20;
+            } else if (catState === 'glitch') {
+                colors = ['#ff0040', '#00ffff', '#ff00ff', '#fff', '#000'];
+                particleCount = 15;
+            } else if (catState === 'zombie') {
+                colors = ['#00ff41', '#39ff14', '#32cd32', '#228b22', '#adff2f'];
+                particleCount = 10;
+            } else if (catState === 'ko') {
+                colors = ['#ff4757', '#8b0000', '#5a3d7a', '#48dbfb', '#fff'];
+                particleCount = 12;
+            } else {
+                colors = ['#ff6b6b', '#ffe66d', '#48dbfb', '#ff9ff3', '#54a0ff'];
+                particleCount = 6;
+            }
             for (let i = 0; i < particleCount; i++) {
                 const p = document.createElement('div');
                 p.className = 'particle';
