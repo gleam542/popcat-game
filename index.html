@@ -1139,7 +1139,7 @@
                 inferno:   { flash: '#ff4400', color: '#ff4400', bg: '#1a0500', shadow: '0 0 25px rgba(255,68,0,0.9)', msgs: msgInferno, emojis: emojiSets.inferno },
             };
             const themeKeys = Object.keys(randomThemes);
-            const milestones = [1000, 1500, 2000, 2500, 3000, 3500, 4000];
+            const milestones = [1000, 1500, 2000, 2500, 3000, 3500, 4000, 4500, 5000, 5500, 6000, 6500, 7000, 7500, 8000, 8500, 9000, 9500];
 
             // 每 500 分（1000~4000）隨機切換主題
             if (milestones.includes(score) && catState !== 'nirvana') {
@@ -1183,7 +1183,7 @@
                 spawnEmoji(t.emojis, randInt(10, 20));
             }
 
-            if (score === 5000 && catState !== 'nirvana') {
+            if (score === 10000 && catState !== 'nirvana') {
                 catState = 'nirvana';
                 // 停掉矩陣
                 matrixRunning = false;
