@@ -1139,10 +1139,12 @@
                 inferno:   { flash: '#ff4400', color: '#ff4400', bg: '#1a0500', shadow: '0 0 25px rgba(255,68,0,0.9)', msgs: msgInferno, emojis: emojiSets.inferno },
             };
             const themeKeys = Object.keys(randomThemes);
-            const milestones = [1000, 1500, 2000, 2500, 3000, 3500, 4000, 4500, 5000, 5500, 6000, 6500, 7000, 7500, 8000, 8500, 9000, 9500];
+            // 1000~9999 之間隨機間隔切換主題
+            if (!window.nextMilestone) window.nextMilestone = 1000;
 
-            // 每 500 分（1000~4000）隨機切換主題
-            if (milestones.includes(score) && catState !== 'nirvana') {
+            if (score === window.nextMilestone && score < 10000 && catState !== 'nirvana') {
+                // 下次切換間隔隨機 200~800
+                window.nextMilestone = score + randInt(200, 800);
                 // 清理前一個狀態的殘留
                 blackholeOverlay.style.opacity = '0';
                 matrixRunning = false;
