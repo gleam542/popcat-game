@@ -256,11 +256,105 @@
             opacity: 0;
             transition: opacity 0.15s;
         }
+
+        /* 2500 黑洞模式 */
+        #blackhole-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            pointer-events: none;
+            z-index: 996;
+            opacity: 0;
+            background: radial-gradient(circle at 50% 50%, transparent 0%, transparent 20%, rgba(0,0,0,0.8) 60%, #000 100%);
+            transition: opacity 0.5s;
+        }
+
+        @keyframes suckIn {
+            0% { transform: scale(1) rotate(0deg); filter: none; }
+            50% { transform: scale(0.3) rotate(360deg); filter: blur(2px); }
+            100% { transform: scale(1) rotate(720deg); filter: none; }
+        }
+
+        @keyframes vortexSpin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .vortex-particle {
+            position: fixed;
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 997;
+            animation: spiralIn 1.5s ease-in forwards;
+        }
+
+        @keyframes spiralIn {
+            0% { opacity: 1; }
+            100% { opacity: 0; transform: translate(var(--ex), var(--ey)) scale(0); }
+        }
+
+        /* 3000 矩陣模式 */
+        #matrix-canvas {
+            position: fixed;
+            top: 0; left: 0;
+            pointer-events: none;
+            z-index: 995;
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+
+        /* 5000 涅槃模式 */
+        .halo {
+            position: absolute;
+            top: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 30px;
+            border: 3px solid #ffd700;
+            border-radius: 50%;
+            box-shadow: 0 0 15px #ffd700, 0 0 30px rgba(255, 215, 0, 0.5);
+            animation: haloGlow 1.5s ease-in-out infinite alternate;
+            pointer-events: none;
+            display: none;
+        }
+
+        @keyframes haloGlow {
+            0% { box-shadow: 0 0 15px #ffd700, 0 0 30px rgba(255, 215, 0, 0.3); }
+            100% { box-shadow: 0 0 25px #ffd700, 0 0 50px rgba(255, 215, 0, 0.6), 0 0 80px rgba(255, 215, 0, 0.2); }
+        }
+
+        .firework {
+            position: fixed;
+            pointer-events: none;
+            z-index: 998;
+        }
+
+        .firework-particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            animation: fireworkBurst 1s ease-out forwards;
+        }
+
+        @keyframes fireworkBurst {
+            0% { opacity: 1; transform: translate(0, 0) scale(1); }
+            100% { opacity: 0; transform: translate(var(--fx), var(--fy)) scale(0); }
+        }
+
+        @keyframes nirvanaGlow {
+            0%, 100% { filter: drop-shadow(0 0 10px rgba(255,215,0,0.5)); }
+            50% { filter: drop-shadow(0 0 30px rgba(255,215,0,0.9)) drop-shadow(0 0 60px rgba(255,215,0,0.3)); }
+        }
     </style>
 </head>
 <body>
     <div id="ko-flash"></div>
     <div id="color-flash" class="screen-flash-color"></div>
+    <div id="blackhole-overlay"></div>
+    <canvas id="matrix-canvas"></canvas>
     <h1>POP CAT!</h1>
     <div id="score">0</div>
     <div id="cat-container" onmousedown="popCat(event)" ontouchstart="popCat(event)">
@@ -499,6 +593,54 @@
             <span class="star">&#11088;</span>
             <span class="star">&#11088;</span>
         </div>
+        <!-- 光環 (涅槃) -->
+        <div class="halo" id="halo"></div>
+        <!-- 涅槃金色閉嘴貓 -->
+        <svg id="cat-gold-closed" class="cat-svg" viewBox="0 0 300 300" style="display:none;">
+            <defs><linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#ffd700"/><stop offset="50%" style="stop-color:#fff4a3"/><stop offset="100%" style="stop-color:#ffa500"/></linearGradient></defs>
+            <polygon points="60,120 90,30 130,110" fill="url(#goldGrad)"/>
+            <polygon points="70,110 95,50 120,105" fill="#fff4a3"/>
+            <polygon points="240,120 210,30 170,110" fill="url(#goldGrad)"/>
+            <polygon points="230,110 205,50 180,105" fill="#fff4a3"/>
+            <ellipse cx="150" cy="180" rx="110" ry="100" fill="url(#goldGrad)"/>
+            <ellipse cx="150" cy="190" rx="85" ry="75" fill="#fff4a3"/>
+            <ellipse cx="115" cy="165" rx="18" ry="20" fill="#fff"/>
+            <ellipse cx="185" cy="165" rx="18" ry="20" fill="#fff"/>
+            <ellipse cx="115" cy="165" rx="10" ry="12" fill="#ffa500"/>
+            <ellipse cx="185" cy="165" rx="10" ry="12" fill="#ffa500"/>
+            <circle cx="120" cy="160" r="4" fill="#fff"/>
+            <circle cx="190" cy="160" r="4" fill="#fff"/>
+            <ellipse cx="150" cy="195" rx="8" ry="5" fill="#ff6b6b"/>
+            <path d="M 130 205 Q 150 215 170 205" stroke="#b8860b" stroke-width="3" fill="none" stroke-linecap="round"/>
+            <line x1="50" y1="190" x2="100" y2="195" stroke="#b8860b" stroke-width="2"/>
+            <line x1="50" y1="205" x2="100" y2="205" stroke="#b8860b" stroke-width="2"/>
+            <line x1="200" y1="195" x2="250" y2="190" stroke="#b8860b" stroke-width="2"/>
+            <line x1="200" y1="205" x2="250" y2="205" stroke="#b8860b" stroke-width="2"/>
+        </svg>
+        <!-- 涅槃金色張嘴貓 -->
+        <svg id="cat-gold-open" class="cat-svg" viewBox="0 0 300 300" style="display:none;">
+            <defs><linearGradient id="goldGrad2" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#ffd700"/><stop offset="50%" style="stop-color:#fff4a3"/><stop offset="100%" style="stop-color:#ffa500"/></linearGradient></defs>
+            <polygon points="60,120 90,30 130,110" fill="url(#goldGrad2)"/>
+            <polygon points="70,110 95,50 120,105" fill="#fff4a3"/>
+            <polygon points="240,120 210,30 170,110" fill="url(#goldGrad2)"/>
+            <polygon points="230,110 205,50 180,105" fill="#fff4a3"/>
+            <ellipse cx="150" cy="180" rx="110" ry="100" fill="url(#goldGrad2)"/>
+            <ellipse cx="150" cy="190" rx="85" ry="75" fill="#fff4a3"/>
+            <ellipse cx="115" cy="160" rx="20" ry="24" fill="#fff"/>
+            <ellipse cx="185" cy="160" rx="20" ry="24" fill="#fff"/>
+            <ellipse cx="115" cy="160" rx="12" ry="14" fill="#ffa500"/>
+            <ellipse cx="185" cy="160" rx="12" ry="14" fill="#ffa500"/>
+            <circle cx="121" cy="155" r="5" fill="#fff"/>
+            <circle cx="191" cy="155" r="5" fill="#fff"/>
+            <ellipse cx="150" cy="192" rx="8" ry="5" fill="#ff6b6b"/>
+            <ellipse cx="150" cy="220" rx="30" ry="22" fill="#b8860b"/>
+            <ellipse cx="150" cy="215" rx="25" ry="12" fill="#ff4757"/>
+            <ellipse cx="150" cy="230" rx="12" ry="8" fill="#ff6b81"/>
+            <line x1="45" y1="185" x2="95" y2="192" stroke="#b8860b" stroke-width="2"/>
+            <line x1="45" y1="200" x2="95" y2="200" stroke="#b8860b" stroke-width="2"/>
+            <line x1="205" y1="192" x2="255" y2="185" stroke="#b8860b" stroke-width="2"/>
+            <line x1="205" y1="200" x2="255" y2="200" stroke="#b8860b" stroke-width="2"/>
+        </svg>
     </div>
     <div id="bruise-msg"></div>
     <div id="pps">每秒點擊: 0</div>
@@ -507,7 +649,7 @@
     <script>
         let score = 0;
         let clicks = [];
-        let catState = 'normal'; // normal, bruised, ko, zombie, glitch, chaos
+        let catState = 'normal'; // normal, bruised, ko, zombie, glitch, chaos, blackhole, matrix, nirvana
         const scoreEl = document.getElementById('score');
         const catClosed = document.getElementById('cat-closed');
         const catOpen = document.getElementById('cat-open');
@@ -521,7 +663,15 @@
         const container = document.getElementById('cat-container');
         const ppsEl = document.getElementById('pps');
         const colorFlash = document.getElementById('color-flash');
+        const blackholeOverlay = document.getElementById('blackhole-overlay');
+        const matrixCanvas = document.getElementById('matrix-canvas');
+        const matrixCtx = matrixCanvas.getContext('2d');
+        const haloEl = document.getElementById('halo');
+        const catGoldClosed = document.getElementById('cat-gold-closed');
+        const catGoldOpen = document.getElementById('cat-gold-open');
         let mouthTimer = null;
+        let matrixRunning = false;
+        let matrixDrops = [];
 
         // 隨機工具
         const rand = (min, max) => Math.random() * (max - min) + min;
@@ -532,11 +682,17 @@
         const emojiSets = {
             zombie: ['💀', '🧟', '☠️', '🦴', '🧠', '👻', '🪦', '⚰️'],
             glitch: ['⚡', '💥', '🔥', '❌', '⚠️', '🔴', '💢', '🌀', '📛', '🆘'],
-            chaos: ['💀', '🌈', '🎆', '🎇', '✨', '💫', '🔮', '🎪', '🤯', '👾', '🛸', '🌪️', '☄️', '🃏', '🎭', '💣']
+            chaos: ['💀', '🌈', '🎆', '🎇', '✨', '💫', '🔮', '🎪', '🤯', '👾', '🛸', '🌪️', '☄️', '🃏', '🎭', '💣'],
+            blackhole: ['🕳️', '🌑', '🌀', '💫', '☄️', '🌌', '♾️', '⚫'],
+            matrix: ['0', '1', '🟩', '💊', '🐈', '🖥️', '⌨️', '📟'],
+            nirvana: ['✨', '🌟', '⭐', '💛', '👑', '🏆', '🎆', '🎇', '🌈', '🦋', '🕊️', '💎']
         };
         const msgZombie = ['貓貓變殭屍了...', '腦...漿...', '喵...嗚...不死之身！', '殭屍貓覺醒！'];
         const msgGlitch = ['系̸̢統̶錯̵誤̸', 'E̷R̶R̷O̶R̵ ̷4̶0̷4̵', '貓貓.exe 崩潰了', '現̸實̶裂̵開̸了̵'];
         const msgChaos = ['混沌降臨！', '宇宙在顫抖！', '這不是演習！！', '救命啊啊啊！！', '貓界末日！', '???!!!'];
+        const msgBlackhole = ['被黑洞吞噬中...', '時空扭曲！', '事件視界突破！', '重力崩塌！', '喵...的...維度...'];
+        const msgMatrix = ['Wake up, Cat...', '紅藥丸還是藍藥丸？', 'There is no spoon', '你看到程式碼了嗎？', 'Follow the white cat'];
+        const msgNirvana = ['涅槃重生！', '貓神降臨！', '永恆之光！', '超越一切！', '傳說中的金色貓咪！'];
 
         // 隨機顏色閃光
         function flashColor() {
@@ -686,6 +842,135 @@
             for (let i = 0; i < count; i++) pick(effects)();
         }
 
+        // === 2500: 黑洞模式 ===
+        function vortexParticles() {
+            const cx = window.innerWidth / 2;
+            const cy = window.innerHeight / 2;
+            for (let i = 0; i < randInt(3, 6); i++) {
+                const p = document.createElement('div');
+                p.className = 'vortex-particle';
+                const angle = rand(0, Math.PI * 2);
+                const dist = rand(100, 400);
+                const sx = cx + Math.cos(angle) * dist;
+                const sy = cy + Math.sin(angle) * dist;
+                p.style.left = sx + 'px';
+                p.style.top = sy + 'px';
+                p.style.background = pick(['#8b5cf6', '#6d28d9', '#4c1d95', '#7c3aed', '#a78bfa', '#fff']);
+                p.style.setProperty('--ex', (cx - sx) + 'px');
+                p.style.setProperty('--ey', (cy - sy) + 'px');
+                p.style.animationDuration = rand(0.5, 1.5) + 's';
+                document.body.appendChild(p);
+                setTimeout(() => p.remove(), 1500);
+            }
+        }
+
+        function blackholeEffects() {
+            const effects = [
+                () => vortexParticles(),
+                () => spawnEmoji(emojiSets.blackhole, randInt(1, 4)),
+                () => { container.style.animation = `suckIn ${rand(0.3,0.8)}s ease-in-out`; setTimeout(() => { container.style.animation = ''; }, 800); },
+                () => randomShake(25),
+                () => { document.body.style.filter = `brightness(${rand(0.2,0.6)}) contrast(${rand(1.5,3)})`; setTimeout(() => { document.body.style.filter = ''; }, 200); },
+                () => randomSound(),
+                () => { const s = rand(0.3, 1.5); container.style.transform = `scale(${s}) rotate(${rand(-90,90)}deg)`; setTimeout(() => { container.style.transform = ''; }, 400); },
+                () => { bruiseMsg.textContent = pick(msgBlackhole); },
+            ];
+            const count = randInt(2, 4);
+            for (let i = 0; i < count; i++) pick(effects)();
+        }
+
+        // === 3000: 矩陣模式 ===
+        function startMatrix() {
+            if (matrixRunning) return;
+            matrixRunning = true;
+            matrixCanvas.width = window.innerWidth;
+            matrixCanvas.height = window.innerHeight;
+            matrixCanvas.style.opacity = '0.4';
+            const cols = Math.floor(matrixCanvas.width / 14);
+            matrixDrops = Array(cols).fill(1);
+
+            function drawMatrix() {
+                if (!matrixRunning) return;
+                matrixCtx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+                matrixCtx.fillRect(0, 0, matrixCanvas.width, matrixCanvas.height);
+                matrixCtx.fillStyle = '#0f0';
+                matrixCtx.font = '14px monospace';
+                for (let i = 0; i < matrixDrops.length; i++) {
+                    const text = String.fromCharCode(0x30A0 + Math.random() * 96);
+                    matrixCtx.fillStyle = Math.random() > 0.9 ? '#fff' : `hsl(120, 100%, ${rand(40,70)}%)`;
+                    matrixCtx.fillText(text, i * 14, matrixDrops[i] * 14);
+                    if (matrixDrops[i] * 14 > matrixCanvas.height && Math.random() > 0.975) matrixDrops[i] = 0;
+                    matrixDrops[i]++;
+                }
+                requestAnimationFrame(drawMatrix);
+            }
+            drawMatrix();
+        }
+
+        function matrixEffects() {
+            const effects = [
+                () => spawnEmoji(emojiSets.matrix, randInt(2, 5)),
+                () => glitchEffect(),
+                () => randomCatAnim(0.3),
+                () => { container.style.filter = `brightness(${rand(0.5,2)}) hue-rotate(${randInt(100,140)}deg)`; setTimeout(() => { container.style.filter = ''; }, 300); },
+                () => randomShake(15),
+                () => randomSound(),
+                () => { scoreEl.style.color = `hsl(120, 100%, ${randInt(40,70)}%)`; },
+                () => { bruiseMsg.textContent = pick(msgMatrix); },
+                () => { document.body.style.filter = `hue-rotate(${randInt(100,140)}deg) brightness(${rand(0.7,1.5)})`; setTimeout(() => { document.body.style.filter = ''; }, 200); },
+            ];
+            const count = randInt(2, 3);
+            for (let i = 0; i < count; i++) pick(effects)();
+        }
+
+        // === 5000: 涅槃模式 ===
+        function spawnFirework(x, y) {
+            const fw = document.createElement('div');
+            fw.className = 'firework';
+            fw.style.left = x + 'px';
+            fw.style.top = y + 'px';
+            const colors = ['#ffd700', '#ff6b6b', '#48dbfb', '#ff9ff3', '#fff', '#ffa500', '#ff4757'];
+            for (let i = 0; i < 20; i++) {
+                const p = document.createElement('div');
+                p.className = 'firework-particle';
+                p.style.background = pick(colors);
+                const angle = (i / 20) * Math.PI * 2;
+                const dist = rand(40, 120);
+                p.style.setProperty('--fx', Math.cos(angle) * dist + 'px');
+                p.style.setProperty('--fy', Math.sin(angle) * dist + 'px');
+                fw.appendChild(p);
+            }
+            document.body.appendChild(fw);
+            setTimeout(() => fw.remove(), 1000);
+        }
+
+        function nirvanaEffects() {
+            const effects = [
+                () => spawnEmoji(emojiSets.nirvana, randInt(2, 5)),
+                () => spawnFirework(rand(50, window.innerWidth - 50), rand(50, window.innerHeight - 50)),
+                () => { container.style.animation = `nirvanaGlow 1s ease-in-out`; setTimeout(() => { container.style.animation = ''; }, 1000); },
+                () => randomCatAnim(0.5),
+                () => { document.body.style.filter = `brightness(${rand(1,2)}) saturate(${rand(1,2)})`; setTimeout(() => { document.body.style.filter = ''; }, 300); },
+                () => { scoreEl.style.textShadow = `0 0 ${randInt(10,40)}px #ffd700, 0 0 ${randInt(40,80)}px rgba(255,215,0,0.5)`; },
+                () => { bruiseMsg.textContent = pick(msgNirvana); },
+                () => { flashColor(); },
+                () => {
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.connect(gain); gain.connect(audioCtx.destination);
+                    osc.type = 'sine';
+                    const notes = [523, 659, 784, 1047];
+                    osc.frequency.setValueAtTime(pick(notes), audioCtx.currentTime);
+                    gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+                    osc.start(audioCtx.currentTime);
+                    osc.stop(audioCtx.currentTime + 0.3);
+                },
+            ];
+            const count = randInt(2, 4);
+            for (let i = 0; i < count; i++) pick(effects)();
+        }
+
         // 音效
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
@@ -784,10 +1069,82 @@
                 spawnEmoji(emojiSets.chaos, 25);
             }
 
+            if (score === 2500 && catState === 'chaos') {
+                catState = 'blackhole';
+                blackholeOverlay.style.opacity = '1';
+                koFlash.style.background = '#000';
+                koFlash.style.opacity = '1';
+                setTimeout(() => { koFlash.style.opacity = '0'; koFlash.style.background = '#fff'; }, 500);
+                document.body.classList.add('screen-shake');
+                setTimeout(() => document.body.classList.remove('screen-shake'), 1000);
+                bruiseMsg.textContent = pick(msgBlackhole);
+                bruiseMsg.style.color = '#a78bfa';
+                bruiseMsg.style.fontSize = '30px';
+                bruiseMsg.style.textShadow = '0 0 25px rgba(167, 139, 250, 0.9), 0 0 50px rgba(109, 40, 217, 0.5)';
+                document.body.style.background = '#05000d';
+                scoreEl.style.color = '#a78bfa';
+                scoreEl.style.textShadow = '0 0 20px rgba(167, 139, 250, 0.8)';
+                starsEl.style.display = 'none';
+                vortexParticles();
+                spawnEmoji(emojiSets.blackhole, 15);
+            }
+            if (score === 3000 && catState === 'blackhole') {
+                catState = 'matrix';
+                blackholeOverlay.style.opacity = '0';
+                startMatrix();
+                koFlash.style.background = '#00ff00';
+                koFlash.style.opacity = '0.8';
+                setTimeout(() => { koFlash.style.opacity = '0'; koFlash.style.background = '#fff'; }, 200);
+                document.body.classList.add('screen-shake');
+                setTimeout(() => document.body.classList.remove('screen-shake'), 600);
+                bruiseMsg.textContent = pick(msgMatrix);
+                bruiseMsg.style.color = '#00ff41';
+                bruiseMsg.style.fontSize = '28px';
+                bruiseMsg.style.textShadow = '0 0 20px rgba(0, 255, 65, 0.8), 0 0 40px rgba(0, 255, 0, 0.3)';
+                bruiseMsg.style.fontFamily = 'monospace';
+                document.body.style.background = '#000800';
+                scoreEl.style.color = '#00ff41';
+                scoreEl.style.fontFamily = 'monospace';
+                scoreEl.style.textShadow = '0 0 15px rgba(0, 255, 65, 0.8)';
+                spawnEmoji(emojiSets.matrix, 20);
+            }
+            if (score === 5000 && catState === 'matrix') {
+                catState = 'nirvana';
+                // 停掉矩陣
+                matrixRunning = false;
+                matrixCanvas.style.opacity = '0';
+                // 大量煙火
+                for (let i = 0; i < 10; i++) {
+                    setTimeout(() => spawnFirework(rand(50, window.innerWidth - 50), rand(50, window.innerHeight - 50)), i * 200);
+                }
+                // 金色閃光
+                koFlash.style.background = '#ffd700';
+                koFlash.style.opacity = '1';
+                setTimeout(() => { koFlash.style.opacity = '0.5'; setTimeout(() => { koFlash.style.opacity = '0'; koFlash.style.background = '#fff'; }, 300); }, 300);
+                document.body.classList.add('screen-shake');
+                setTimeout(() => document.body.classList.remove('screen-shake'), 1000);
+                // 光環
+                haloEl.style.display = 'block';
+                starsEl.style.display = 'none';
+                bruiseMsg.textContent = pick(msgNirvana);
+                bruiseMsg.style.color = '#ffd700';
+                bruiseMsg.style.fontSize = '36px';
+                bruiseMsg.style.fontFamily = 'Arial, sans-serif';
+                bruiseMsg.style.textShadow = '0 0 30px #ffd700, 0 0 60px rgba(255, 215, 0, 0.5), 0 0 90px rgba(255, 165, 0, 0.3)';
+                document.body.style.background = '#1a0f00';
+                scoreEl.style.color = '#ffd700';
+                scoreEl.style.fontFamily = 'Arial, sans-serif';
+                scoreEl.style.textShadow = '0 0 20px #ffd700, 0 0 40px rgba(255, 215, 0, 0.5)';
+                spawnEmoji(emojiSets.nirvana, 30);
+            }
+
             // 隨機效果觸發
             if (catState === 'zombie') zombieEffects();
             if (catState === 'glitch') glitchEffects();
             if (catState === 'chaos') chaosEffects();
+            if (catState === 'blackhole') blackholeEffects();
+            if (catState === 'matrix') matrixEffects();
+            if (catState === 'nirvana') nirvanaEffects();
 
             // 分數彈跳效果
             scoreEl.classList.remove('pop');
@@ -796,7 +1153,8 @@
 
             // 選擇對應的貓
             let closedSvg, openSvg;
-            if (['ko', 'zombie', 'glitch', 'chaos'].includes(catState)) { closedSvg = catKoClosed; openSvg = catKoOpen; }
+            if (catState === 'nirvana') { closedSvg = catGoldClosed; openSvg = catGoldOpen; }
+            else if (['ko', 'zombie', 'glitch', 'chaos', 'blackhole', 'matrix'].includes(catState)) { closedSvg = catKoClosed; openSvg = catKoOpen; }
             else if (catState === 'bruised') { closedSvg = catBruisedClosed; openSvg = catBruisedOpen; }
             else { closedSvg = catClosed; openSvg = catOpen; }
 
@@ -807,6 +1165,8 @@
             catBruisedOpen.style.display = 'none';
             catKoClosed.style.display = 'none';
             catKoOpen.style.display = 'none';
+            catGoldClosed.style.display = 'none';
+            catGoldOpen.style.display = 'none';
 
             openSvg.style.display = 'block';
             clearTimeout(mouthTimer);
@@ -817,7 +1177,7 @@
 
             // 音效
             playPop();
-            if (['ko', 'zombie', 'glitch', 'chaos'].includes(catState)) {
+            if (['ko', 'zombie', 'glitch', 'chaos', 'blackhole', 'matrix'].includes(catState)) {
                 const osc2 = audioCtx.createOscillator();
                 const gain2 = audioCtx.createGain();
                 osc2.connect(gain2);
@@ -841,7 +1201,16 @@
 
             // 粒子特效
             let colors, particleCount;
-            if (catState === 'chaos') {
+            if (catState === 'nirvana') {
+                colors = ['#ffd700', '#fff4a3', '#ffa500', '#fff', '#ffec8b', '#ffe066'];
+                particleCount = 15;
+            } else if (catState === 'matrix') {
+                colors = ['#00ff41', '#008f11', '#003b00', '#00ff00', '#fff'];
+                particleCount = 12;
+            } else if (catState === 'blackhole') {
+                colors = ['#8b5cf6', '#6d28d9', '#4c1d95', '#a78bfa', '#fff'];
+                particleCount = 15;
+            } else if (catState === 'chaos') {
                 colors = Array.from({length: 8}, () => `hsl(${randInt(0,360)}, 100%, 60%)`);
                 particleCount = 20;
             } else if (catState === 'glitch') {
